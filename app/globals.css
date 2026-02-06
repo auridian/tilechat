@@ -10,6 +10,10 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --spacing-safe-top: var(--alien-safe-area-inset-top, 0px);
+  --spacing-safe-bottom: var(--alien-safe-area-inset-bottom, 0px);
+  --spacing-safe-left: var(--alien-safe-area-inset-left, 0px);
+  --spacing-safe-right: var(--alien-safe-area-inset-right, 0px);
 }
 
 @media (prefers-color-scheme: dark) {

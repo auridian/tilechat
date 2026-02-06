@@ -13,8 +13,9 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@alien_org/auth-client": "^0.2.2",
-    "@alien_org/react": "^0.2.3",
+    "@alien_org/auth-client": "^0.2.3",
+    "@alien_org/react": "^0.2.4",
+    "@tanstack/react-query": "^5.90.20",
     "drizzle-orm": "^0.45.1",
     "next": "16.1.6",
     "postgres": "^3.4.5",
