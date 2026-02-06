@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { House, Compass, User, type LucideIcon } from "lucide-react";
+import { House, Compass, User, Gem, type LucideIcon } from "lucide-react";
 
 export interface TabItem {
   label: string;
@@ -12,6 +12,7 @@ export interface TabItem {
 
 const DEFAULT_TABS: TabItem[] = [
   { label: "Home", href: "/", icon: House },
+  { label: "Store", href: "/store", icon: Gem },
   { label: "Explore", href: "/explore", icon: Compass },
   { label: "Profile", href: "/profile", icon: User },
 ];

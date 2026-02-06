@@ -1,16 +1,16 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
+import { getServerEnv } from "@/lib/env";
 import * as schema from "./schema";
 
 let _db: ReturnType<typeof drizzle<typeof schema>> | null = null;
 
 function getDb() {
   if (!_db) {
-    const url = process.env.DATABASE_URL;
-    if (!url) throw new Error("DATABASE_URL is not set");
+    const { DATABASE_URL } = getServerEnv();
 
-    _db = drizzle(postgres(url, { max: 10, idle_timeout: 20, connect_timeout: 10 }), {
+    _db = drizzle(postgres(DATABASE_URL, { max: 10, idle_timeout: 20, connect_timeout: 10 }), {
       schema,
     });
   }
