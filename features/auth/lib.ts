@@ -1,11 +1,16 @@
-import { createAuthClient, type AuthClient } from "@alien_org/auth-client";
+import {
+  createAuthClient,
+  type AuthClient,
+} from "@alien_org/auth-client";
 
 // Singleton auth client
 let authClient: AuthClient | null = null;
 
 export function getAuthClient(): AuthClient {
   if (!authClient) {
-    authClient = createAuthClient();
+    authClient = createAuthClient({
+      jwksUrl: 'https://sso.develop.alien-api.com/oauth/jwks',
+    });
   }
   return authClient;
 }
@@ -14,7 +19,11 @@ export function getAuthClient(): AuthClient {
  * Verify an access token and return the token info
  * The 'sub' field contains the user's Alien ID
  */
-export async function verifyToken(accessToken: string) {
+export type TokenInfo = Awaited<ReturnType<AuthClient["verifyToken"]>>;
+
+export async function verifyToken(
+  accessToken: string,
+): Promise<TokenInfo> {
   const client = getAuthClient();
   return client.verifyToken(accessToken);
 }

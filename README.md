@@ -1,73 +1,83 @@
 # Alien Miniapp Boilerplate
 
-A production-ready boilerplate for building miniapps on the Alien platform with Next.js.
-
-## Features
-
-- **Authentication**: JWT verification with `@alien_org/auth-client`
-- **Database**: PostgreSQL with Drizzle ORM and migrations
-- **Frontend**: React with `@alien_org/react` SDK integration
-- **API**: Next.js API routes with user management
+Boilerplate for building miniapps on the Alien platform. Next.js 16, PostgreSQL, Drizzle ORM, JWT auth.
 
 ## Quick Start
 
-### 1. Install dependencies
-
 ```bash
 bun install
-```
-
-### 2. Start the database
-
-```bash
 docker compose up -d
-```
-
-### 3. Run migrations
-
-```bash
 bun run db:migrate
-```
-
-### 4. Start development server
-
-```bash
 bun run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see the app.
+Open [http://localhost:3000](http://localhost:3000).
+
+## Environment Variables
+
+```bash
+cp .env.example .env
+```
+
+| Variable | Description |
+|---|---|
+| `DATABASE_URL` | PostgreSQL connection string |
 
 ## Project Structure
 
 ```
-├── app/
-│   ├── api/
-│   │   └── me/route.ts     # User info endpoint
-│   ├── layout.tsx          # Root layout with AlienProvider
-│   ├── page.tsx            # Home page with auth status
-│   └── providers.tsx       # Client-side providers
-├── lib/
-│   ├── auth.ts             # Auth client and utilities
-│   └── db/
-│       ├── index.ts        # Database connection
-│       └── schema.ts       # Drizzle schema (users table)
-├── drizzle/                # Generated migrations
-└── docker-compose.yml      # Local PostgreSQL
+app/
+├── api/me/route.ts            # Authenticated user endpoint
+├── layout.tsx                  # Root layout with AlienProvider
+├── page.tsx                    # Home page
+├── providers.tsx               # Client-side providers
+├── error.tsx                   # Error boundary
+└── global-error.tsx            # Global error boundary
+features/
+├── auth/
+│   ├── components/
+│   │   └── connection-status.tsx   # Bridge & token status indicator
+│   └── lib.ts                      # Token verification (JWKS)
+└── user/
+    ├── components/
+    │   └── user-info.tsx           # User info display
+    ├── dto.ts                      # Zod schemas for user data
+    ├── hooks/
+    │   └── use-current-user.ts     # Hook to fetch current user
+    └── queries.ts                  # Database queries (find/create user)
+lib/db/
+├── index.ts                   # Database connection & migrations
+└── schema.ts                  # Drizzle schema
 ```
 
-## Environment Variables
+## Auth
 
-Copy `.env.example` to `.env.local`:
+Authentication is handled automatically by the Alien platform:
 
-```bash
-cp .env.example .env.local
-```
+1. Alien app injects an auth token when loading your miniapp
+2. `useAlien()` hook from `@alien_org/react` provides the token on the client
+3. Frontend sends the token as `Authorization: Bearer <token>` to your API routes
+4. API verifies the token against Alien's JWKS using `@alien_org/auth-client`
+5. The `sub` claim from the JWT is the user's unique Alien ID
 
-| Variable | Description |
-|----------|-------------|
-| `DATABASE_URL` | PostgreSQL connection string |
+**Registration is implicit** — on first API call, the user is automatically created in the database via a find-or-create pattern. No signup flow needed.
 
-## Database Commands
+When running outside the Alien app, the bridge won't be available. The connection status component helps with debugging.
+
+## Database
+
+PostgreSQL with Drizzle ORM. Local setup uses Docker (`docker-compose.yml`).
+
+**Schema** (`lib/db/schema.ts`):
+
+| Column | Type | Description |
+|---|---|---|
+| `id` | UUID | Auto-generated primary key |
+| `alienId` | TEXT (unique) | User's Alien ID from JWT `sub` claim |
+| `createdAt` | TIMESTAMP | Set on first auth |
+| `updatedAt` | TIMESTAMP | Updated on each auth |
+
+**Commands:**
 
 ```bash
 bun run db:generate   # Generate migration from schema changes
@@ -76,18 +86,14 @@ bun run db:push       # Push schema directly (dev only)
 bun run db:studio     # Open Drizzle Studio GUI
 ```
 
-## API Endpoints
+To run migrations automatically on server start, set `RUN_MIGRATIONS=true`. Disabled by default.
 
-### GET /api/me
+## API
 
-Returns the current user's information. Requires Bearer token.
+### `GET /api/me`
 
-**Headers:**
-```
-Authorization: Bearer <token>
-```
+Returns the authenticated user. Requires Bearer token.
 
-**Response:**
 ```json
 {
   "id": "uuid",
@@ -97,29 +103,8 @@ Authorization: Bearer <token>
 }
 ```
 
-## How Auth Works
-
-1. The Alien app injects an auth token when loading your miniapp
-2. The `@alien_org/react` SDK provides the token via `useAlien()` hook
-3. Your frontend sends the token to API routes in the Authorization header
-4. The API verifies the token using `@alien_org/auth-client` against Alien's JWKS
-5. The `sub` claim from the JWT is the user's unique Alien ID
-
-## Development
-
-When running outside the Alien app, the bridge won't be available. The UI shows connection status to help with debugging.
-
 ## Deployment
 
-### Vercel (Recommended)
-
-1. Create a PostgreSQL database (Vercel Postgres, Neon, Supabase, etc.)
-2. Add `DATABASE_URL` to your Vercel project environment variables
-3. Deploy - migrations run automatically during the build step
-
-### Other Platforms
-
-1. Set up a PostgreSQL database
-2. Set the `DATABASE_URL` environment variable
-3. Run `bun run db:migrate` to apply migrations
-4. Deploy
+1. Set up a PostgreSQL database and set `DATABASE_URL`
+2. Either run `bun run db:migrate` manually or set `RUN_MIGRATIONS=true` for auto-migration on start
+3. Deploy

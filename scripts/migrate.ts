@@ -1,7 +1,10 @@
 #!/usr/bin/env bun
 /**
- * Migration script that only runs if DATABASE_URL is set.
- * This allows builds to succeed in CI/CD environments without a database.
+ * Migration script. Can be run manually or enabled during build
+ * by setting RUN_MIGRATIONS=true in your environment.
+ *
+ * Usage:
+ *   bun run scripts/migrate.ts
  */
 
 export {};
