@@ -1,7 +1,6 @@
 "use client";
 
 import { useCurrentUser } from "../hooks/use-current-user";
-import type { UserDTO } from "../dto";
 
 interface FieldProps {
   label: string;
