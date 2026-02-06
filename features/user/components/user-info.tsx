@@ -12,11 +12,27 @@ function formatDate(iso: string): string {
   return Number.isNaN(d.getTime()) ? iso : d.toLocaleDateString();
 }
 
+function Skeleton() {
+  return (
+    <div className="w-full rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="mb-4 h-4 w-16 animate-pulse rounded bg-zinc-200 dark:bg-zinc-700" />
+      <div className="space-y-3">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="flex items-center justify-between">
+            <div className="h-4 w-16 animate-pulse rounded bg-zinc-200 dark:bg-zinc-700" />
+            <div className="h-4 w-24 animate-pulse rounded bg-zinc-100 dark:bg-zinc-800" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function UserInfo() {
   const { user, loading, error, isAuthenticated } = useCurrentUser();
 
   if (loading) {
-    return <p className="text-sm text-zinc-500">Loading...</p>;
+    return <Skeleton />;
   }
 
   return (
