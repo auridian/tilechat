@@ -1,7 +1,12 @@
 export async function register() {
   if (process.env.RUN_MIGRATIONS === "true") {
-    const { migrateDb } = await import("./lib/db");
-    await migrateDb();
+    try {
+      const { migrateDb } = await import("./lib/db");
+      await migrateDb();
+    } catch (err) {
+      console.error("[migrations] Failed to run migrations:", err);
+      console.error("[migrations] The app will start but DB may not be ready.");
+    }
   }
 
   // Prune expired rooms/posts/sessions every 5 minutes
