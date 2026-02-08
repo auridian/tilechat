@@ -40,3 +40,35 @@ export const transactions = pgTable("transactions", {
 });
 
 export type Transaction = typeof transactions.$inferSelect;
+
+export const rooms = pgTable("rooms", {
+  hash: text("hash").primaryKey(),
+  tile: text("tile").notNull(),
+  slot: text("slot").notNull(),
+  expiresTs: timestamp("expires_ts", { withTimezone: true }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export type Room = typeof rooms.$inferSelect;
+
+export const posts = pgTable("posts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  hash: text("hash").notNull(),
+  alienId: text("alien_id").notNull(),
+  body: text("body").notNull(),
+  ts: timestamp("ts", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export type Post = typeof posts.$inferSelect;
+
+export const sessions = pgTable("sessions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  alienId: text("alien_id").notNull(),
+  hash: text("hash").notNull(),
+  lat: text("lat"),
+  lon: text("lon"),
+  joinedAt: timestamp("joined_at", { withTimezone: true }).notNull().defaultNow(),
+  lastPostAt: timestamp("last_post_at", { withTimezone: true }),
+});
+
+export type Session = typeof sessions.$inferSelect;

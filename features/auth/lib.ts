@@ -14,7 +14,14 @@ function getAuthClient(): AuthClient {
 
 export type TokenInfo = Awaited<ReturnType<AuthClient["verifyToken"]>>;
 
-export function verifyToken(accessToken: string): Promise<TokenInfo> {
+export async function verifyToken(accessToken: string): Promise<TokenInfo> {
+  if (
+    process.env.NODE_ENV === "development" &&
+    accessToken.startsWith("dev:")
+  ) {
+    const sub = accessToken.slice(4);
+    return { sub } as TokenInfo;
+  }
   return getAuthClient().verifyToken(accessToken);
 }
 

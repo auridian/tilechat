@@ -1,17 +1,35 @@
-# Alien Miniapp Boilerplate
+# tile-chatter
 
-Boilerplate for building miniapps on the Alien platform with **authentication** and **payments** out of the box. Next.js 16, PostgreSQL, Drizzle ORM, JWT auth, crypto payments (USDC on Solana, ALIEN token).
+Hyperlocal verified-human chat. One real person per ~100m tile, ephemeral 30-minute rooms, 90-second cooldown between posts. Built on the Alien identity platform.
 
 ## Quick Start
 
 ```bash
 bun install
+cp .env.example .env
 docker compose up -d
 bun run db:migrate
 bun run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000). In dev mode a test identity is used automatically.
+
+## Deploy (Railway)
+
+1. Push to GitHub
+2. Create a new project on [Railway](https://railway.app)
+3. Add a **PostgreSQL** service
+4. Add a **GitHub Repo** service pointing to this repo
+5. Set env vars on the web service:
+   - `DATABASE_URL` -- copy from the Railway Postgres service
+   - `WEBHOOK_PUBLIC_KEY` -- from Alien Dev Portal webhook
+   - `NEXT_PUBLIC_RECIPIENT_ADDRESS` -- your Solana wallet
+   - `NEXT_PUBLIC_ALIEN_RECIPIENT_ADDRESS` -- your Alien provider address
+   - `RUN_MIGRATIONS=true`
+   - `NODE_ENV=production`
+6. Set build command: `bun install && bun run build`
+7. Set start command: `bun run start`
+8. Railway auto-deploys on push.
 
 ## Environment Variables
 

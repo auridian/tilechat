@@ -19,7 +19,7 @@ export default function ProfilePage() {
           <dl className="space-y-2 text-sm">
             <div className="flex justify-between">
               <dt className="text-zinc-500 dark:text-zinc-400">App</dt>
-              <dd className="font-medium text-zinc-900 dark:text-zinc-100">Alien Miniapp</dd>
+              <dd className="font-medium text-zinc-900 dark:text-zinc-100">tile-chatter</dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-zinc-500 dark:text-zinc-400">Version</dt>

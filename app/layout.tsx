@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Alien Miniapp",
-  description: "Alien Miniapp Boilerplate",
+  title: "tile-chatter",
+  description: "Hyperlocal verified-human chat",
 };
 
 export default function RootLayout({
@@ -30,7 +30,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>
-          <main className="mx-auto flex min-h-screen w-full max-w-md flex-col gap-8 px-6 pb-24 pt-12">
+          <main className="mx-auto flex min-h-screen w-full max-w-md flex-col gap-3 px-4 pb-24 pt-4">
             {children}
           </main>
           <TabBar />
