@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AlienProvider } from "@alien_org/react";
 import { Toaster } from "react-hot-toast";
 import { ErrorBoundary } from "./error-boundary";
+import { AlienLogger } from "./alien-logger";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -21,6 +22,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <AlienProvider>
+      <AlienLogger />
       <ErrorBoundary>
         <QueryClientProvider client={queryClient}>
           {children}

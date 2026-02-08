@@ -1,43 +1,44 @@
 "use client";
 
-import { useAlien, useLaunchParams } from "@alien_org/react";
+import { useEffect, useState } from "react";
+import { AlienLogViewer } from "@/app/alien-logger";
 
-export default function DebugPage() {
-  const { authToken, isBridgeAvailable, contractVersion } = useAlien();
-  const launchParams = useLaunchParams();
+function BootLogs() {
+  const [bootLogs, setBootLogs] = useState<{ time: string; msg: string }[]>([]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const logs = (window as any).__tileChatLogs;
+      if (Array.isArray(logs)) {
+        setBootLogs([...logs]);
+      }
+    }, 500);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <div className="flex flex-col gap-3 text-xs font-mono">
-      <h1 className="text-lg font-bold">Debug</h1>
-
-      <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-800">
-        <p><strong>Bridge available:</strong> {String(isBridgeAvailable)}</p>
-        <p><strong>Auth token:</strong> {authToken ? authToken.slice(0, 20) + "..." : "none"}</p>
-        <p><strong>Contract version:</strong> {contractVersion ?? "none"}</p>
-      </div>
-
-      <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-800">
-        <p className="mb-1 font-bold">Launch Params:</p>
-        {launchParams ? (
-          <pre className="whitespace-pre-wrap break-all">
-            {JSON.stringify({
-              authToken: launchParams.authToken ? "present" : "missing",
-              contractVersion: launchParams.contractVersion,
-              hostVersion: launchParams.hostAppVersion,
-              platform: launchParams.platform,
-              startParam: launchParams.startParam,
-            }, null, 2)}
-          </pre>
+    <div className="flex flex-col gap-1 p-3">
+      <h2 className="text-sm font-bold font-mono">Boot Logs (pre-React)</h2>
+      <div className="max-h-[30vh] overflow-y-auto rounded-lg border border-zinc-200 bg-black p-2 text-[10px] font-mono text-cyan-400 dark:border-zinc-700">
+        {bootLogs.length === 0 ? (
+          <p className="text-zinc-500">No boot logs captured</p>
         ) : (
-          <p>Not available (not running in Alien app)</p>
+          bootLogs.map((e, i) => (
+            <div key={i} className={e.msg.includes("ERROR") || e.msg.includes("REJECTION") ? "text-red-400" : ""}>
+              <span className="text-zinc-500">{e.time}</span> {e.msg}
+            </div>
+          ))
         )}
       </div>
+    </div>
+  );
+}
 
-      <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-800">
-        <p className="mb-1 font-bold">Environment:</p>
-        <p><strong>NODE_ENV:</strong> {process.env.NODE_ENV}</p>
-        <p><strong>User Agent:</strong> {typeof navigator !== "undefined" ? navigator.userAgent : "N/A"}</p>
-      </div>
+export default function DebugPage() {
+  return (
+    <div className="flex flex-col gap-2">
+      <BootLogs />
+      <AlienLogViewer />
     </div>
   );
 }
