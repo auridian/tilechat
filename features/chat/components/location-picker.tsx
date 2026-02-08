@@ -12,7 +12,7 @@ interface MapViewProps {
 }
 
 const MapView = dynamic(
-  () => import("./map-view") as Promise<{ default: ComponentType<MapViewProps> }>,
+  () => import("@/features/chat/components/map-view") as Promise<{ default: ComponentType<MapViewProps> }>,
   { ssr: false },
 );
 
