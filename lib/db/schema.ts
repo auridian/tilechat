@@ -72,3 +72,13 @@ export const sessions = pgTable("sessions", {
 });
 
 export type Session = typeof sessions.$inferSelect;
+
+export const contacts = pgTable("contacts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  ownerAlienId: text("owner_alien_id").notNull(),
+  contactAlienId: text("contact_alien_id").notNull(),
+  nickname: text("nickname"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export type Contact = typeof contacts.$inferSelect;

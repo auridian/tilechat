@@ -2,12 +2,13 @@
 
 import { useEffect, useCallback, useState, useRef } from "react";
 import { useAlien } from "@alien_org/react";
-import { MapPin, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useChatRoom } from "@/features/chat/hooks/use-chat-room";
 import { useGeolocation } from "@/features/chat/hooks/use-geolocation";
 import { ChatFeed } from "./chat-feed";
 import { ComposeBar } from "./compose-bar";
 import { RoomHeader } from "./room-header";
+import { LocationPicker } from "./location-picker";
 
 export function ChatRoom() {
   const { authToken: alienToken, isBridgeAvailable } = useAlien();
@@ -30,19 +31,17 @@ export function ChatRoom() {
 
   const joinAttempted = useRef(false);
 
-  const handleJoin = useCallback(async () => {
-    if (geo.position) {
-      joinAttempted.current = true;
-      await chat.join(geo.position.lat, geo.position.lon);
-    }
-  }, [geo.position, chat]);
+  const handleJoinAt = useCallback(async (lat: number, lon: number) => {
+    joinAttempted.current = true;
+    await chat.join(lat, lon);
+  }, [chat]);
 
-  // Auto-join once we have position + auth (only once)
+  // Auto-join once we have GPS position + auth (only once)
   useEffect(() => {
     if (geo.position && authToken && !chat.room && !chat.isJoining && !joinAttempted.current) {
-      handleJoin();
+      handleJoinAt(geo.position.lat, geo.position.lon);
     }
-  }, [geo.position, authToken, chat.room, chat.isJoining, handleJoin]);
+  }, [geo.position, authToken, chat.room, chat.isJoining, handleJoinAt]);
 
   // Persist room hash for Nearby page
   useEffect(() => {
@@ -61,35 +60,7 @@ export function ChatRoom() {
     );
   }
 
-  // Step 1: Request GPS
-  if (!geo.position && !geo.isLoading) {
-    return (
-      <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
-        <div className="rounded-full bg-zinc-100 p-4 dark:bg-zinc-800">
-          <MapPin size={32} className="text-zinc-400" />
-        </div>
-        <div>
-          <h2 className="mb-1 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
-            Enable Location
-          </h2>
-          <p className="mb-4 text-sm text-zinc-500 dark:text-zinc-400">
-            tile-chatter needs your location to find your local chat room.
-          </p>
-        </div>
-        {geo.error && (
-          <p className="text-sm text-red-500">{geo.error}</p>
-        )}
-        <button
-          onClick={geo.requestPosition}
-          className="rounded-xl bg-zinc-900 px-6 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 dark:bg-zinc-100 dark:text-zinc-900"
-        >
-          Share Location
-        </button>
-      </div>
-    );
-  }
-
-  // Step 2: Getting GPS
+  // Getting GPS (auto-attempt)
   if (geo.isLoading) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-3">
@@ -99,8 +70,8 @@ export function ChatRoom() {
     );
   }
 
-  // Step 3: Joining room
-  if (chat.isJoining || (!chat.room && geo.position)) {
+  // Joining room
+  if (chat.isJoining) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-3">
         <Loader2 size={24} className="animate-spin text-zinc-400" />
@@ -109,7 +80,7 @@ export function ChatRoom() {
     );
   }
 
-  // Step 4: In room
+  // In room
   if (chat.room) {
     return (
       <div className="flex flex-1 flex-col gap-3" style={{ minHeight: "calc(100vh - 10rem)" }}>
@@ -126,7 +97,7 @@ export function ChatRoom() {
           </div>
         )}
 
-        <ChatFeed messages={chat.messages} currentAlienId={chat.currentAlienId ?? undefined} />
+        <ChatFeed messages={chat.messages} currentAlienId={chat.currentAlienId ?? undefined} authToken={authToken ?? undefined} />
 
         <ComposeBar
           onSend={chat.post}
@@ -137,18 +108,12 @@ export function ChatRoom() {
     );
   }
 
-  // Fallback error
+  // No GPS and no room -- show location picker with map fallback
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-3">
-      {chat.error && (
-        <p className="text-sm text-red-500">{chat.error}</p>
-      )}
-      <button
-        onClick={handleJoin}
-        className="rounded-xl bg-zinc-900 px-6 py-2.5 text-sm font-medium text-white dark:bg-zinc-100 dark:text-zinc-900"
-      >
-        Try Again
-      </button>
-    </div>
+    <LocationPicker
+      onSelect={handleJoinAt}
+      geoError={geo.error}
+      onRetryGeo={geo.requestPosition}
+    />
   );
 }

@@ -1,0 +1,233 @@
+2026-02-08T21:53:21.000000000Z [inf]  Starting Container
+2026-02-08T21:53:23.025287902Z [err]  ⚠ You are using a non-standard "NODE_ENV" value in your environment. This creates inconsistencies in the project and is strongly advised against. Read more: https://nextjs.org/docs/messages/non-standard-node-env
+2026-02-08T21:53:23.025297813Z [inf]  ▲ Next.js 16.1.6
+2026-02-08T21:53:23.025319122Z [err]  $ next start
+2026-02-08T21:53:23.026098171Z [inf]  - Local:         http://localhost:8080
+2026-02-08T21:53:23.026107310Z [inf]  - Network:       http://10.234.145.62:8080
+2026-02-08T21:53:23.026113690Z [inf]  
+2026-02-08T21:53:23.026120939Z [inf]  ✓ Starting...
+2026-02-08T21:53:23.886659899Z [inf]  Running database migrations...
+2026-02-08T21:53:23.886667738Z [inf]  ✓ Ready in 1592ms
+2026-02-08T21:53:43.879516540Z [err]  Failed to prepare server Error: An error occurred while loading instrumentation hook: Failed query: CREATE SCHEMA IF NOT EXISTS "drizzle"
+2026-02-08T21:53:43.879524779Z [err]  params: 
+2026-02-08T21:53:43.879530827Z [err]      at queryWithCache (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:28:40604)
+2026-02-08T21:53:43.879537589Z [err]      at processTicksAndRejections (null) {
+2026-02-08T21:53:43.879538637Z [err]    }
+2026-02-08T21:53:43.879543784Z [err]    query: 'CREATE SCHEMA IF NOT EXISTS "drizzle"',
+2026-02-08T21:53:43.879549211Z [err]    params: [],
+2026-02-08T21:53:43.879555066Z [err]  }
+2026-02-08T21:53:43.879556252Z [err]    [cause]: Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432
+2026-02-08T21:53:43.879563436Z [err]        at <unknown> (Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432)
+2026-02-08T21:53:43.879567726Z [err]  Failed to prepare server Error: An error occurred while loading instrumentation hook: Failed query: CREATE SCHEMA IF NOT EXISTS "drizzle"
+2026-02-08T21:53:43.879570582Z [err]        at <anonymous> (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:1:9383)
+2026-02-08T21:53:43.879578718Z [err]  params: 
+2026-02-08T21:53:43.879579498Z [err]        at n (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:11:2377) {
+2026-02-08T21:53:43.879586807Z [err]      code: 'CONNECT_TIMEOUT',
+2026-02-08T21:53:43.879592329Z [err]      errno: 'CONNECT_TIMEOUT',
+2026-02-08T21:53:43.879598135Z [err]      at queryWithCache (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:28:40604)
+2026-02-08T21:53:43.879598263Z [err]      address: 'postgres-production-43a5.up.railway.app',
+2026-02-08T21:53:43.879606291Z [err]      port: 5432
+2026-02-08T21:53:43.879607324Z [err]      at processTicksAndRejections (null) {
+2026-02-08T21:53:43.879613875Z [err]    query: 'CREATE SCHEMA IF NOT EXISTS "drizzle"',
+2026-02-08T21:53:43.880257886Z [err]    params: [],
+2026-02-08T21:53:43.880265046Z [err]    [cause]: Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432
+2026-02-08T21:53:43.880270551Z [err]        at <unknown> (Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432)
+2026-02-08T21:53:43.880277511Z [err]        at <anonymous> (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:1:9383)
+2026-02-08T21:53:43.880281998Z [err]  Error: An error occurred while loading instrumentation hook: Failed query: CREATE SCHEMA IF NOT EXISTS "drizzle"
+2026-02-08T21:53:43.880283716Z [err]        at n (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:11:2377) {
+2026-02-08T21:53:43.880290492Z [err]      code: 'CONNECT_TIMEOUT',
+2026-02-08T21:53:43.880294901Z [err]  params: 
+2026-02-08T21:53:43.880297626Z [err]      errno: 'CONNECT_TIMEOUT',
+2026-02-08T21:53:43.880304229Z [err]      address: 'postgres-production-43a5.up.railway.app',
+2026-02-08T21:53:43.880310604Z [err]      port: 5432
+2026-02-08T21:53:43.880311098Z [err]      at queryWithCache (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:28:40604)
+2026-02-08T21:53:43.880318171Z [err]    }
+2026-02-08T21:53:43.880318459Z [err]      at processTicksAndRejections (null) {
+2026-02-08T21:53:43.880325962Z [err]    query: 'CREATE SCHEMA IF NOT EXISTS "drizzle"',
+2026-02-08T21:53:43.880327198Z [err]  }
+2026-02-08T21:53:43.880331763Z [err]    params: [],
+2026-02-08T21:53:43.880336871Z [err]    [cause]: Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432
+2026-02-08T21:53:43.880346080Z [err]        at <unknown> (Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432)
+2026-02-08T21:53:43.880354402Z [err]        at <anonymous> (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:1:9383)
+2026-02-08T21:53:43.880363586Z [err]        at n (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:11:2377) {
+2026-02-08T21:53:43.881072552Z [err]      code: 'CONNECT_TIMEOUT',
+2026-02-08T21:53:43.881081163Z [err]      errno: 'CONNECT_TIMEOUT',
+2026-02-08T21:53:43.881082360Z [err]  Error: An error occurred while loading instrumentation hook: Failed query: CREATE SCHEMA IF NOT EXISTS "drizzle"
+2026-02-08T21:53:43.881089400Z [err]        at <anonymous> (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:1:9383)
+2026-02-08T21:53:43.881089811Z [err]      address: 'postgres-production-43a5.up.railway.app',
+2026-02-08T21:53:43.881097218Z [err]      port: 5432
+2026-02-08T21:53:43.881100174Z [err]        at n (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:11:2377) {
+2026-02-08T21:53:43.881104758Z [err]    }
+2026-02-08T21:53:43.881108257Z [err]      code: 'CONNECT_TIMEOUT',
+2026-02-08T21:53:43.881111847Z [err]  }
+2026-02-08T21:53:43.881115615Z [err]      errno: 'CONNECT_TIMEOUT',
+2026-02-08T21:53:43.881119558Z [err]  Error: An error occurred while loading instrumentation hook: Failed query: CREATE SCHEMA IF NOT EXISTS "drizzle"
+2026-02-08T21:53:43.881123385Z [err]      address: 'postgres-production-43a5.up.railway.app',
+2026-02-08T21:53:43.881126595Z [err]  params: 
+2026-02-08T21:53:43.881130881Z [err]      port: 5432
+2026-02-08T21:53:43.881133945Z [err]      at queryWithCache (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:28:40604)
+2026-02-08T21:53:43.881138707Z [err]    }
+2026-02-08T21:53:43.881141620Z [err]      at processTicksAndRejections (null) {
+2026-02-08T21:53:43.881146180Z [err]  }
+2026-02-08T21:53:43.881148803Z [err]    query: 'CREATE SCHEMA IF NOT EXISTS "drizzle"',
+2026-02-08T21:53:43.881153932Z [err]    params: [],
+2026-02-08T21:53:43.881158276Z [err]    [cause]: Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432
+2026-02-08T21:53:43.881162868Z [err]        at <unknown> (Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432)
+2026-02-08T21:53:43.881552414Z [err]  params: 
+2026-02-08T21:53:43.881565422Z [err]      at queryWithCache (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:28:40604)
+2026-02-08T21:53:43.881566337Z [err]  params: 
+2026-02-08T21:53:43.881575938Z [err]      at processTicksAndRejections (null) {
+2026-02-08T21:53:43.881577437Z [err]      at queryWithCache (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:28:40604)
+2026-02-08T21:53:43.881585822Z [err]      at processTicksAndRejections (null) {
+2026-02-08T21:53:43.881588078Z [err]    query: 'CREATE SCHEMA IF NOT EXISTS "drizzle"',
+2026-02-08T21:53:43.881594078Z [err]    query: 'CREATE SCHEMA IF NOT EXISTS "drizzle"',
+2026-02-08T21:53:43.881599984Z [err]    params: [],
+2026-02-08T21:53:43.881601162Z [err]    params: [],
+2026-02-08T21:53:43.881608184Z [err]    [cause]: Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432
+2026-02-08T21:53:43.881611322Z [err]    [cause]: Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432
+2026-02-08T21:53:43.881615321Z [err]        at <unknown> (Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432)
+2026-02-08T21:53:43.881620424Z [err]        at <anonymous> (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:1:9383)
+2026-02-08T21:53:43.881625858Z [err]        at n (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:11:2377) {
+2026-02-08T21:53:43.881630769Z [err]      code: 'CONNECT_TIMEOUT',
+2026-02-08T21:53:43.881637504Z [err]      errno: 'CONNECT_TIMEOUT',
+2026-02-08T21:53:43.881643320Z [err]      address: 'postgres-production-43a5.up.railway.app',
+2026-02-08T21:53:43.881649664Z [err]      port: 5432
+2026-02-08T21:53:43.881654870Z [err]    }
+2026-02-08T21:53:43.881659762Z [err]  }
+2026-02-08T21:53:43.881664781Z [err]  Error: An error occurred while loading instrumentation hook: Failed query: CREATE SCHEMA IF NOT EXISTS "drizzle"
+2026-02-08T21:53:43.882479202Z [err]        at <unknown> (Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432)
+2026-02-08T21:53:43.882482608Z [err]        at n (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:11:2377) {
+2026-02-08T21:53:43.882488160Z [err]      at processTicksAndRejections (null) {
+2026-02-08T21:53:43.882489846Z [err]        at <anonymous> (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:1:9383)
+2026-02-08T21:53:43.882492882Z [err]      code: 'CONNECT_TIMEOUT',
+2026-02-08T21:53:43.882498760Z [err]        at n (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:11:2377) {
+2026-02-08T21:53:43.882501731Z [err]    query: 'CREATE SCHEMA IF NOT EXISTS "drizzle"',
+2026-02-08T21:53:43.882508349Z [err]      code: 'CONNECT_TIMEOUT',
+2026-02-08T21:53:43.882510012Z [err]      address: 'postgres-production-43a5.up.railway.app',
+2026-02-08T21:53:43.882514808Z [err]      errno: 'CONNECT_TIMEOUT',
+2026-02-08T21:53:43.882521336Z [err]      address: 'postgres-production-43a5.up.railway.app',
+2026-02-08T21:53:43.882528204Z [err]    params: [],
+2026-02-08T21:53:43.882528224Z [err]      port: 5432
+2026-02-08T21:53:43.882535376Z [err]    }
+2026-02-08T21:53:43.882540157Z [err]    [cause]: Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432
+2026-02-08T21:53:43.882542650Z [err]  }
+2026-02-08T21:53:43.882548761Z [err]  Error: An error occurred while loading instrumentation hook: Failed query: CREATE SCHEMA IF NOT EXISTS "drizzle"
+2026-02-08T21:53:43.882550813Z [err]        at <unknown> (Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432)
+2026-02-08T21:53:43.882555660Z [err]  params: 
+2026-02-08T21:53:43.882562976Z [err]        at <anonymous> (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:1:9383)
+2026-02-08T21:53:43.882564657Z [err]      at queryWithCache (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:28:40604)
+2026-02-08T21:53:43.883090455Z [err]      port: 5432
+2026-02-08T21:53:43.883091198Z [err]  Error: An error occurred while loading instrumentation hook: Failed query: CREATE SCHEMA IF NOT EXISTS "drizzle"
+2026-02-08T21:53:43.883099160Z [err]    }
+2026-02-08T21:53:43.883101858Z [err]  params: 
+2026-02-08T21:53:43.883105783Z [err]  }
+2026-02-08T21:53:43.883112704Z [err]      at queryWithCache (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:28:40604)
+2026-02-08T21:53:43.883113310Z [err]  ⨯ unhandledRejection:  Error: An error occurred while loading instrumentation hook: Failed query: CREATE SCHEMA IF NOT EXISTS "drizzle"
+2026-02-08T21:53:43.883120491Z [err]  params: 
+2026-02-08T21:53:43.883123204Z [err]      at processTicksAndRejections (null) {
+2026-02-08T21:53:43.883127080Z [err]      at queryWithCache (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:28:40604)
+2026-02-08T21:53:43.883131866Z [err]      at processTicksAndRejections (null) {
+2026-02-08T21:53:43.883136273Z [err]    query: 'CREATE SCHEMA IF NOT EXISTS "drizzle"',
+2026-02-08T21:53:43.883140678Z [err]    params: [],
+2026-02-08T21:53:43.883146668Z [err]    [cause]: Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432
+2026-02-08T21:53:43.883151052Z [err]        at <unknown> (Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432)
+2026-02-08T21:53:43.883155667Z [err]        at <anonymous> (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:1:9383)
+2026-02-08T21:53:43.883160348Z [err]        at n (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:11:2377) {
+2026-02-08T21:53:43.883164754Z [err]      code: 'CONNECT_TIMEOUT',
+2026-02-08T21:53:43.883168990Z [err]      errno: 'CONNECT_TIMEOUT',
+2026-02-08T21:53:43.883173294Z [err]      address: 'postgres-production-43a5.up.railway.app',
+2026-02-08T21:53:43.883178524Z [err]      port: 5432
+2026-02-08T21:53:43.883194084Z [err]    }
+2026-02-08T21:53:43.883198948Z [err]  }
+2026-02-08T21:53:43.883739654Z [err]    query: 'CREATE SCHEMA IF NOT EXISTS "drizzle"',
+2026-02-08T21:53:43.883745984Z [err]    params: [],
+2026-02-08T21:53:43.883752937Z [err]    [cause]: Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432
+2026-02-08T21:53:43.883759139Z [err]        at <unknown> (Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432)
+2026-02-08T21:53:43.883763991Z [err]        at <anonymous> (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:1:9383)
+2026-02-08T21:53:43.883769200Z [err]        at n (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:11:2377) {
+2026-02-08T21:53:43.883775115Z [err]      code: 'CONNECT_TIMEOUT',
+2026-02-08T21:53:43.883779630Z [err]      errno: 'CONNECT_TIMEOUT',
+2026-02-08T21:53:43.883784287Z [err]      address: 'postgres-production-43a5.up.railway.app',
+2026-02-08T21:53:43.883789399Z [err]      port: 5432
+2026-02-08T21:53:43.883793721Z [err]    }
+2026-02-08T21:53:43.883797987Z [err]  }
+2026-02-08T21:53:43.883802163Z [err]  Error: An error occurred while loading instrumentation hook: Failed query: CREATE SCHEMA IF NOT EXISTS "drizzle"
+2026-02-08T21:53:43.883806284Z [err]  params: 
+2026-02-08T21:53:43.883811523Z [err]      at queryWithCache (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:28:40604)
+2026-02-08T21:53:43.883815749Z [err]      at processTicksAndRejections (null) {
+2026-02-08T21:53:43.883819788Z [err]    query: 'CREATE SCHEMA IF NOT EXISTS "drizzle"',
+2026-02-08T21:53:43.883823943Z [err]    params: [],
+2026-02-08T21:53:43.883828098Z [err]    [cause]: Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432
+2026-02-08T21:53:43.883832484Z [err]        at <unknown> (Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432)
+2026-02-08T21:53:43.883837226Z [err]        at <anonymous> (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:1:9383)
+2026-02-08T21:53:43.884496674Z [err]        at n (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:11:2377) {
+2026-02-08T21:53:43.884502820Z [err]      code: 'CONNECT_TIMEOUT',
+2026-02-08T21:53:43.884508066Z [err]      errno: 'CONNECT_TIMEOUT',
+2026-02-08T21:53:43.884512893Z [err]      address: 'postgres-production-43a5.up.railway.app',
+2026-02-08T21:53:43.884517790Z [err]      port: 5432
+2026-02-08T21:53:43.884523113Z [err]    }
+2026-02-08T21:53:43.884526510Z [err]        at <unknown> (Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432)
+2026-02-08T21:53:43.884528962Z [err]  }
+2026-02-08T21:53:43.884533976Z [err]  Error: An error occurred while loading instrumentation hook: Failed query: CREATE SCHEMA IF NOT EXISTS "drizzle"
+2026-02-08T21:53:43.884539482Z [err]  params: 
+2026-02-08T21:53:43.884542373Z [err]        at <anonymous> (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:1:9383)
+2026-02-08T21:53:43.884545761Z [err]      at queryWithCache (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:28:40604)
+2026-02-08T21:53:43.884551406Z [err]      at processTicksAndRejections (null) {
+2026-02-08T21:53:43.884554709Z [err]        at n (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:11:2377) {
+2026-02-08T21:53:43.884559047Z [err]    query: 'CREATE SCHEMA IF NOT EXISTS "drizzle"',
+2026-02-08T21:53:43.884566354Z [err]      code: 'CONNECT_TIMEOUT',
+2026-02-08T21:53:43.884566968Z [err]    params: [],
+2026-02-08T21:53:43.884573737Z [err]    [cause]: Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432
+2026-02-08T21:53:43.884577218Z [err]      errno: 'CONNECT_TIMEOUT',
+2026-02-08T21:53:43.884584088Z [err]      address: 'postgres-production-43a5.up.railway.app',
+2026-02-08T21:53:43.884589500Z [err]      port: 5432
+2026-02-08T21:53:43.884594920Z [err]    }
+2026-02-08T21:53:43.884601422Z [err]  }
+2026-02-08T21:53:43.884607860Z [err]  Error: An error occurred while loading instrumentation hook: Failed query: CREATE SCHEMA IF NOT EXISTS "drizzle"
+2026-02-08T21:53:43.885318899Z [err]  params: 
+2026-02-08T21:53:43.885327054Z [err]      at queryWithCache (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:28:40604)
+2026-02-08T21:53:43.885332978Z [err]      at processTicksAndRejections (null) {
+2026-02-08T21:53:43.885338029Z [err]    query: 'CREATE SCHEMA IF NOT EXISTS "drizzle"',
+2026-02-08T21:53:43.885344089Z [err]    params: [],
+2026-02-08T21:53:43.885349502Z [err]    [cause]: Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432
+2026-02-08T21:53:43.885355174Z [err]        at <unknown> (Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432)
+2026-02-08T21:53:43.885362254Z [err]        at <anonymous> (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:1:9383)
+2026-02-08T21:53:43.885366897Z [err]        at n (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:11:2377) {
+2026-02-08T21:53:43.885371703Z [err]      code: 'CONNECT_TIMEOUT',
+2026-02-08T21:53:43.885376677Z [err]      errno: 'CONNECT_TIMEOUT',
+2026-02-08T21:53:43.885381821Z [err]      address: 'postgres-production-43a5.up.railway.app',
+2026-02-08T21:53:43.885386788Z [err]      port: 5432
+2026-02-08T21:53:43.885391669Z [err]    }
+2026-02-08T21:53:43.885396111Z [err]  }
+2026-02-08T21:53:48.119816906Z [err]  Error: An error occurred while loading instrumentation hook: Failed query: CREATE SCHEMA IF NOT EXISTS "drizzle"
+2026-02-08T21:53:48.119828576Z [err]  params: 
+2026-02-08T21:53:48.119837627Z [err]      at queryWithCache (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:28:40604)
+2026-02-08T21:53:48.119845065Z [err]      at processTicksAndRejections (null) {
+2026-02-08T21:53:48.119854406Z [err]    query: 'CREATE SCHEMA IF NOT EXISTS "drizzle"',
+2026-02-08T21:53:48.119864530Z [err]    params: [],
+2026-02-08T21:53:48.119872196Z [err]    [cause]: Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432
+2026-02-08T21:53:48.119879481Z [err]        at <unknown> (Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432)
+2026-02-08T21:53:48.119887278Z [err]        at <anonymous> (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:1:9383)
+2026-02-08T21:53:48.119896248Z [err]        at n (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:11:2377) {
+2026-02-08T21:53:48.119904424Z [err]      code: 'CONNECT_TIMEOUT',
+2026-02-08T21:53:48.119912174Z [err]      errno: 'CONNECT_TIMEOUT',
+2026-02-08T21:53:48.119921332Z [err]      address: 'postgres-production-43a5.up.railway.app',
+2026-02-08T21:53:48.119929496Z [err]      port: 5432
+2026-02-08T21:53:48.119937863Z [err]    }
+2026-02-08T21:53:48.119945966Z [err]  }
+2026-02-08T21:53:48.120638095Z [err]      address: 'postgres-production-43a5.up.railway.app',
+2026-02-08T21:53:48.120646420Z [err]  Error: An error occurred while loading instrumentation hook: Failed query: CREATE SCHEMA IF NOT EXISTS "drizzle"
+2026-02-08T21:53:48.120646867Z [err]      port: 5432
+2026-02-08T21:53:48.120652951Z [err]    }
+2026-02-08T21:53:48.120659171Z [err]  params: 
+2026-02-08T21:53:48.120659854Z [err]  }
+2026-02-08T21:53:48.120668342Z [err]      at queryWithCache (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:28:40604)
+2026-02-08T21:53:48.120676389Z [err]      at processTicksAndRejections (null) {
+2026-02-08T21:53:48.120681624Z [err]    query: 'CREATE SCHEMA IF NOT EXISTS "drizzle"',
+2026-02-08T21:53:48.120691885Z [err]    params: [],
+2026-02-08T21:53:48.120697085Z [err]    [cause]: Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432
+2026-02-08T21:53:48.120702435Z [err]        at <unknown> (Error: write CONNECT_TIMEOUT postgres-production-43a5.up.railway.app:5432)
+2026-02-08T21:53:48.120707633Z [err]        at <anonymous> (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:1:9383)
+2026-02-08T21:53:48.120711890Z [err]        at n (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:11:2377) {
+2026-02-08T21:53:48.120716380Z [err]      code: 'CONNECT_TIMEOUT',
+2026-02-08T21:53:48.120720790Z [err]      errno: 'CONNECT_TIMEOUT',

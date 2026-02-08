@@ -1,0 +1,120 @@
+2026-02-08T21:56:01.000000000Z [inf]  Starting Container
+2026-02-08T21:56:02.526090646Z [err]  $ next start
+2026-02-08T21:56:02.526099245Z [err]  ⚠ You are using a non-standard "NODE_ENV" value in your environment. This creates inconsistencies in the project and is strongly advised against. Read more: https://nextjs.org/docs/messages/non-standard-node-env
+2026-02-08T21:56:02.632968201Z [inf]  ▲ Next.js 16.1.6
+2026-02-08T21:56:02.632981368Z [inf]  - Local:         http://localhost:8080
+2026-02-08T21:56:02.632993657Z [inf]  - Network:       http://10.195.78.95:8080
+2026-02-08T21:56:02.633002542Z [inf]  
+2026-02-08T21:56:02.633011100Z [inf]  ✓ Starting...
+2026-02-08T21:56:03.978991821Z [inf]  Running database migrations...
+2026-02-08T21:56:03.985070155Z [inf]  ✓ Ready in 1610ms
+2026-02-08T21:56:04.184703795Z [err]  Failed to prepare server Error: An error occurred while loading instrumentation hook: Failed query: CREATE SCHEMA IF NOT EXISTS "drizzle"
+2026-02-08T21:56:04.184716516Z [err]  params: 
+2026-02-08T21:56:04.184725462Z [err]      at queryWithCache (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:28:40604)
+2026-02-08T21:56:04.184735555Z [err]      at processTicksAndRejections (null) {
+2026-02-08T21:56:04.184743802Z [err]    query: 'CREATE SCHEMA IF NOT EXISTS "drizzle"',
+2026-02-08T21:56:04.184751590Z [err]    params: [],
+2026-02-08T21:56:04.184760118Z [err]    [cause]: [DNSException: getaddrinfo ENOTFOUND] {
+2026-02-08T21:56:04.184768487Z [err]      code: 'ENOTFOUND',
+2026-02-08T21:56:04.184776663Z [err]      syscall: 'getaddrinfo',
+2026-02-08T21:56:04.184785163Z [err]      errno: 4
+2026-02-08T21:56:04.184795275Z [err]    }
+2026-02-08T21:56:04.184804329Z [err]  }
+2026-02-08T21:56:04.184813275Z [err]  Failed to prepare server Error: An error occurred while loading instrumentation hook: Failed query: CREATE SCHEMA IF NOT EXISTS "drizzle"
+2026-02-08T21:56:04.184821422Z [err]  params: 
+2026-02-08T21:56:04.184830107Z [err]      at queryWithCache (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:28:40604)
+2026-02-08T21:56:04.184837073Z [err]      at processTicksAndRejections (null) {
+2026-02-08T21:56:04.184842725Z [err]    query: 'CREATE SCHEMA IF NOT EXISTS "drizzle"',
+2026-02-08T21:56:04.184849968Z [err]    params: [],
+2026-02-08T21:56:04.184855760Z [err]    [cause]: [DNSException: getaddrinfo ENOTFOUND] {
+2026-02-08T21:56:04.184861427Z [err]      code: 'ENOTFOUND',
+2026-02-08T21:56:04.184867166Z [err]      syscall: 'getaddrinfo',
+2026-02-08T21:56:04.184872135Z [err]      errno: 4
+2026-02-08T21:56:04.184876820Z [err]    }
+2026-02-08T21:56:04.184883570Z [err]  }
+2026-02-08T21:56:04.184888740Z [err]  Error: An error occurred while loading instrumentation hook: Failed query: CREATE SCHEMA IF NOT EXISTS "drizzle"
+2026-02-08T21:56:04.185313664Z [err]  params: 
+2026-02-08T21:56:04.185321100Z [err]      at queryWithCache (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:28:40604)
+2026-02-08T21:56:04.185327587Z [err]      at processTicksAndRejections (null) {
+2026-02-08T21:56:04.185332759Z [err]    query: 'CREATE SCHEMA IF NOT EXISTS "drizzle"',
+2026-02-08T21:56:04.185337670Z [err]    params: [],
+2026-02-08T21:56:04.185342939Z [err]    [cause]: [DNSException: getaddrinfo ENOTFOUND] {
+2026-02-08T21:56:04.185348011Z [err]      code: 'ENOTFOUND',
+2026-02-08T21:56:04.185355991Z [err]      syscall: 'getaddrinfo',
+2026-02-08T21:56:04.185361423Z [err]      errno: 4
+2026-02-08T21:56:04.185373065Z [err]    }
+2026-02-08T21:56:04.185378089Z [err]  }
+2026-02-08T21:56:04.185383084Z [err]  Error: An error occurred while loading instrumentation hook: Failed query: CREATE SCHEMA IF NOT EXISTS "drizzle"
+2026-02-08T21:56:04.185388099Z [err]  params: 
+2026-02-08T21:56:04.185392749Z [err]      at queryWithCache (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:28:40604)
+2026-02-08T21:56:04.185398127Z [err]      at processTicksAndRejections (null) {
+2026-02-08T21:56:04.185402604Z [err]    query: 'CREATE SCHEMA IF NOT EXISTS "drizzle"',
+2026-02-08T21:56:04.185406966Z [err]    params: [],
+2026-02-08T21:56:04.185411460Z [err]    [cause]: [DNSException: getaddrinfo ENOTFOUND] {
+2026-02-08T21:56:04.185416435Z [err]      code: 'ENOTFOUND',
+2026-02-08T21:56:04.185421729Z [err]      syscall: 'getaddrinfo',
+2026-02-08T21:56:04.185426656Z [err]      errno: 4
+2026-02-08T21:56:04.185432616Z [err]    }
+2026-02-08T21:56:04.185437411Z [err]  }
+2026-02-08T21:56:04.189986215Z [err]      syscall: 'getaddrinfo',
+2026-02-08T21:56:04.189990146Z [err]  Error: An error occurred while loading instrumentation hook: Failed query: CREATE SCHEMA IF NOT EXISTS "drizzle"
+2026-02-08T21:56:04.189997386Z [err]      errno: 4
+2026-02-08T21:56:04.189999658Z [err]  params: 
+2026-02-08T21:56:04.190005668Z [err]    }
+2026-02-08T21:56:04.190007587Z [err]      at queryWithCache (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:28:40604)
+2026-02-08T21:56:04.190014141Z [err]  }
+2026-02-08T21:56:04.190016045Z [err]      at processTicksAndRejections (null) {
+2026-02-08T21:56:04.190022478Z [err]    query: 'CREATE SCHEMA IF NOT EXISTS "drizzle"',
+2026-02-08T21:56:04.190027431Z [err]    params: [],
+2026-02-08T21:56:04.190032237Z [err]    [cause]: [DNSException: getaddrinfo ENOTFOUND] {
+2026-02-08T21:56:04.190037055Z [err]      code: 'ENOTFOUND',
+2026-02-08T21:56:04.190041756Z [err]      syscall: 'getaddrinfo',
+2026-02-08T21:56:04.190046360Z [err]      errno: 4
+2026-02-08T21:56:04.190051319Z [err]    }
+2026-02-08T21:56:04.190056316Z [err]  }
+2026-02-08T21:56:04.190060858Z [err]  ⨯ unhandledRejection:  Error: An error occurred while loading instrumentation hook: Failed query: CREATE SCHEMA IF NOT EXISTS "drizzle"
+2026-02-08T21:56:04.190065378Z [err]  params: 
+2026-02-08T21:56:04.190072040Z [err]      at queryWithCache (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:28:40604)
+2026-02-08T21:56:04.190076294Z [err]      at processTicksAndRejections (null) {
+2026-02-08T21:56:04.190080900Z [err]    query: 'CREATE SCHEMA IF NOT EXISTS "drizzle"',
+2026-02-08T21:56:04.190085785Z [err]    params: [],
+2026-02-08T21:56:04.190090417Z [err]    [cause]: [DNSException: getaddrinfo ENOTFOUND] {
+2026-02-08T21:56:04.190094891Z [err]      code: 'ENOTFOUND',
+2026-02-08T21:56:05.287770621Z [err]  }
+2026-02-08T21:56:05.287784533Z [err]  Error: An error occurred while loading instrumentation hook: Failed query: CREATE SCHEMA IF NOT EXISTS "drizzle"
+2026-02-08T21:56:05.287793097Z [err]  params: 
+2026-02-08T21:56:05.287794538Z [err]      at queryWithCache (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:28:40604)
+2026-02-08T21:56:05.287810474Z [err]    query: 'CREATE SCHEMA IF NOT EXISTS "drizzle"',
+2026-02-08T21:56:05.287818692Z [err]    params: [],
+2026-02-08T21:56:05.287819755Z [err]    query: 'CREATE SCHEMA IF NOT EXISTS "drizzle"',
+2026-02-08T21:56:05.287827301Z [err]    params: [],
+2026-02-08T21:56:05.287827614Z [err]    [cause]: [DNSException: getaddrinfo ENOTFOUND] {
+2026-02-08T21:56:05.287834739Z [err]    [cause]: [DNSException: getaddrinfo ENOTFOUND] {
+2026-02-08T21:56:05.287835709Z [err]      code: 'ENOTFOUND',
+2026-02-08T21:56:05.287841961Z [err]      code: 'ENOTFOUND',
+2026-02-08T21:56:05.287843747Z [err]      syscall: 'getaddrinfo',
+2026-02-08T21:56:05.287855881Z [err]    }
+2026-02-08T21:56:07.343143939Z [err]  Error: An error occurred while loading instrumentation hook: Failed query: CREATE SCHEMA IF NOT EXISTS "drizzle"
+2026-02-08T21:56:07.343153433Z [err]  params: 
+2026-02-08T21:56:07.343160382Z [err]      at queryWithCache (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:28:40604)
+2026-02-08T21:56:07.343165338Z [err]      at processTicksAndRejections (null) {
+2026-02-08T21:56:07.343171762Z [err]    query: 'CREATE SCHEMA IF NOT EXISTS "drizzle"',
+2026-02-08T21:56:07.343178688Z [err]    params: [],
+2026-02-08T21:56:07.343183789Z [err]    [cause]: [DNSException: getaddrinfo ENOTFOUND] {
+2026-02-08T21:56:07.343188568Z [err]      code: 'ENOTFOUND',
+2026-02-08T21:56:07.343193460Z [err]      syscall: 'getaddrinfo',
+2026-02-08T21:56:07.343199581Z [err]      errno: 4
+2026-02-08T21:56:07.343206351Z [err]    }
+2026-02-08T21:56:07.343213093Z [err]  }
+2026-02-08T21:56:07.343283831Z [err]  Error: An error occurred while loading instrumentation hook: Failed query: CREATE SCHEMA IF NOT EXISTS "drizzle"
+2026-02-08T21:56:07.343292673Z [err]  params: 
+2026-02-08T21:56:07.343299853Z [err]      at queryWithCache (.next/server/chunks/[root-of-the-server]__eb789d6a._.js:28:40604)
+2026-02-08T21:56:07.343306745Z [err]      at processTicksAndRejections (null) {
+2026-02-08T21:56:07.343314724Z [err]    query: 'CREATE SCHEMA IF NOT EXISTS "drizzle"',
+2026-02-08T21:56:07.343322740Z [err]    params: [],
+2026-02-08T21:56:07.343329930Z [err]    [cause]: [DNSException: getaddrinfo ENOTFOUND] {
+2026-02-08T21:56:07.343336811Z [err]      code: 'ENOTFOUND',
+2026-02-08T21:56:07.343343939Z [err]      syscall: 'getaddrinfo',
+2026-02-08T21:56:07.343351604Z [err]      errno: 4
+2026-02-08T21:56:07.343359637Z [err]    }
+2026-02-08T21:56:07.343366636Z [err]  }

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MessageCircle, Map, User, type LucideIcon } from "lucide-react";
+import { MessageCircle, Map, Users, User, type LucideIcon } from "lucide-react";
 
 export interface TabItem {
   label: string;
@@ -13,6 +13,7 @@ export interface TabItem {
 const DEFAULT_TABS: TabItem[] = [
   { label: "Chat", href: "/", icon: MessageCircle },
   { label: "Nearby", href: "/nearby", icon: Map },
+  { label: "Contacts", href: "/contacts", icon: Users },
   { label: "Profile", href: "/profile", icon: User },
 ];
 
