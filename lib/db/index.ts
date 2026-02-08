@@ -10,7 +10,11 @@ function getDb() {
   if (!_db) {
     const { DATABASE_URL } = getServerEnv();
 
-    _db = drizzle(postgres(DATABASE_URL, { max: 10, idle_timeout: 20, connect_timeout: 10 }), {
+    _db = drizzle(postgres(DATABASE_URL, {
+      max: 10,
+      idle_timeout: 20,
+      connect_timeout: 30,
+    }), {
       schema,
     });
   }
