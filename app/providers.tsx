@@ -21,27 +21,25 @@ export function Providers({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <AlienProvider>
-      <AlienLogger />
-      <ErrorBoundary>
-        <QueryClientProvider client={queryClient}>
-          {children}
-          <Toaster
-            position="top-center"
-            toastOptions={{
-              duration: 3000,
-              style: {
-                background: "var(--background)",
-                color: "var(--foreground)",
-                border: "1px solid rgba(128,128,128,0.2)",
-                fontSize: "14px",
-                borderRadius: "12px",
-                padding: "10px 16px",
-              },
-            }}
-          />
-        </QueryClientProvider>
-      </ErrorBoundary>
-    </AlienProvider>
+    <QueryClientProvider client={queryClient}>
+      <AlienProvider>
+        <AlienLogger />
+        {children}
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: "var(--background)",
+              color: "var(--foreground)",
+              border: "1px solid rgba(128,128,128,0.2)",
+              fontSize: "14px",
+              borderRadius: "12px",
+              padding: "10px 16px",
+            },
+          }}
+        />
+      </AlienProvider>
+    </QueryClientProvider>
   );
 }
