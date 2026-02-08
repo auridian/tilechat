@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { verifyToken, extractBearerToken } from "@/features/auth/lib";
 import { findOrCreateUser } from "@/features/user/queries";
 import { findOrCreateRoom, joinRoom, getActiveSession, getRoomMemberCount } from "@/features/chat/queries";
+import { updateUserLocation } from "@/features/nearby/queries";
 import { computeRoomHashSync, getCurrentSlot, getSlotExpiry, latLonToTile, distanceMeters } from "@/lib/tile";
 import { JwtErrors } from "@alien_org/auth-client";
 
@@ -47,6 +48,7 @@ export async function POST(request: Request) {
 
     const room = await findOrCreateRoom(hash, tile, slot, expiresTs);
     const session = await joinRoom(sub, hash, String(lat), String(lon));
+    await updateUserLocation(sub, String(lat), String(lon));
     const memberCount = await getRoomMemberCount(hash);
 
     return NextResponse.json({

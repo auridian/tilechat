@@ -1,8 +1,12 @@
-import { pgTable, text, timestamp, uuid, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, uuid, jsonb, integer } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   alienId: text("alien_id").notNull().unique(),
+  lastLat: text("last_lat"),
+  lastLon: text("last_lon"),
+  lastSeenAt: timestamp("last_seen_at", { withTimezone: true }),
+  bio: text("bio"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
@@ -69,6 +73,7 @@ export const sessions = pgTable("sessions", {
   lon: text("lon"),
   joinedAt: timestamp("joined_at", { withTimezone: true }).notNull().defaultNow(),
   lastPostAt: timestamp("last_post_at", { withTimezone: true }),
+  lastHeartbeat: timestamp("last_heartbeat", { withTimezone: true }).notNull().defaultNow(),
 });
 
 export type Session = typeof sessions.$inferSelect;
@@ -82,3 +87,20 @@ export const contacts = pgTable("contacts", {
 });
 
 export type Contact = typeof contacts.$inferSelect;
+
+export const bounties = pgTable("bounties", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  creatorAlienId: text("creator_alien_id").notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  rewardAmount: integer("reward_amount"),
+  rewardToken: text("reward_token").default("USDC"),
+  status: text("status").notNull().default("open"),
+  lat: text("lat"),
+  lon: text("lon"),
+  claimedByAlienId: text("claimed_by_alien_id"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  expiresAt: timestamp("expires_at", { withTimezone: true }),
+});
+
+export type Bounty = typeof bounties.$inferSelect;

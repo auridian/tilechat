@@ -6,6 +6,7 @@ import { AlienProvider } from "@alien_org/react";
 import { Toaster } from "react-hot-toast";
 import { ErrorBoundary } from "./error-boundary";
 import { AlienLogger } from "./alien-logger";
+import { HeartbeatProvider } from "./heartbeat-provider";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -24,6 +25,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <AlienProvider>
         <AlienLogger />
+        <HeartbeatProvider />
         {children}
         <Toaster
           position="top-center"
