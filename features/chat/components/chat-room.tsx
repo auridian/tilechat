@@ -33,13 +33,28 @@ export function ChatRoom() {
 
   const handleJoinAt = useCallback(async (lat: number, lon: number) => {
     joinAttempted.current = true;
+    sessionStorage.setItem("tile-chatter-position", JSON.stringify({ lat, lon }));
     await chat.join(lat, lon);
   }, [chat]);
 
-  // Auto-join once we have GPS position + auth (only once)
+  // Auto-rejoin from persisted position (tab switch) or GPS
   useEffect(() => {
-    if (geo.position && authToken && !chat.room && !chat.isJoining && !joinAttempted.current) {
-      handleJoinAt(geo.position.lat, geo.position.lon);
+    if (authToken && !chat.room && !chat.isJoining && !joinAttempted.current) {
+      // Try persisted position first (tab switch case)
+      const saved = sessionStorage.getItem("tile-chatter-position");
+      if (saved) {
+        try {
+          const pos = JSON.parse(saved);
+          if (pos.lat && pos.lon) {
+            handleJoinAt(pos.lat, pos.lon);
+            return;
+          }
+        } catch {}
+      }
+      // Fall back to GPS
+      if (geo.position) {
+        handleJoinAt(geo.position.lat, geo.position.lon);
+      }
     }
   }, [geo.position, authToken, chat.room, chat.isJoining, handleJoinAt]);
 

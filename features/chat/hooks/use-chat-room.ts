@@ -34,6 +34,39 @@ interface UseChatRoomReturn {
 const COOLDOWN_MS = 90 * 1000;
 const POLL_INTERVAL_MS = 3000;
 
+const DEMO_MODE = true;
+
+function makeDemoMessages(): ChatMessage[] {
+  if (!DEMO_MODE) return [];
+  const now = Date.now();
+  return [
+    {
+      id: "demo-1",
+      alienId: "0xA3f7...c9E2",
+      body: "anyone else near downtown rn?",
+      ts: new Date(now - 8 * 60000).toISOString(),
+    },
+    {
+      id: "demo-2",
+      alienId: "0x91bD...4a07",
+      body: "yeah just grabbed coffee on 5th. wild how quiet it is today",
+      ts: new Date(now - 6 * 60000).toISOString(),
+    },
+    {
+      id: "demo-3",
+      alienId: "0xA3f7...c9E2",
+      body: "fr. this app is cool btw, like a local walkie-talkie",
+      ts: new Date(now - 4 * 60000).toISOString(),
+    },
+    {
+      id: "demo-4",
+      alienId: "0x91bD...4a07",
+      body: "lol exactly. 30 min rooms is a neat idea",
+      ts: new Date(now - 2 * 60000).toISOString(),
+    },
+  ];
+}
+
 export function useChatRoom(authToken?: string): UseChatRoomReturn {
   const [room, setRoom] = useState<RoomInfo | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -55,6 +88,8 @@ export function useChatRoom(authToken?: string): UseChatRoomReturn {
     return h;
   }, [authToken]);
 
+  const demoMessages = useRef<ChatMessage[]>(makeDemoMessages());
+
   const fetchHistory = useCallback(async (hash: string) => {
     if (!authToken) return;
     setIsFetching(true);
@@ -62,9 +97,11 @@ export function useChatRoom(authToken?: string): UseChatRoomReturn {
       const res = await fetch(`/api/chat/history/${hash}`, { headers: headers() });
       if (res.ok) {
         const data = await res.json();
-        setMessages(data.posts);
+        const serverPosts: ChatMessage[] = data.posts ?? [];
+        setMessages([...demoMessages.current, ...serverPosts]);
         if (data.memberCount !== undefined) {
-          setRoom((prev) => prev ? { ...prev, memberCount: data.memberCount } : prev);
+          const demoExtra = DEMO_MODE ? 2 : 0;
+          setRoom((prev) => prev ? { ...prev, memberCount: data.memberCount + demoExtra } : prev);
         }
       }
     } catch {
@@ -102,7 +139,7 @@ export function useChatRoom(authToken?: string): UseChatRoomReturn {
       });
       lastPosition.current = { lat, lon };
       if (data.alienId) setCurrentAlienId(data.alienId);
-      setMessages([]);
+      setMessages([...demoMessages.current]);
       await fetchHistory(data.hash);
     } catch (e) {
       setError("Network error joining room");
