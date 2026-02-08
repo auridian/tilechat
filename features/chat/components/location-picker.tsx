@@ -74,7 +74,7 @@ export function LocationPicker({ onSelect, geoError, onRetryGeo }: LocationPicke
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-3" style={{ minHeight: "calc(100vh - 10rem)" }}>
+    <div className="flex flex-col gap-3">
       <div className="text-center">
         <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
           Tap the map to set your location
@@ -86,7 +86,7 @@ export function LocationPicker({ onSelect, geoError, onRetryGeo }: LocationPicke
         </p>
       </div>
 
-      <div className="relative flex-1 overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700" style={{ minHeight: "300px" }}>
+      <div className="overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700" style={{ height: "45vh" }}>
         <MapView
           center={DEFAULT_CENTER}
           pin={pin}
@@ -97,9 +97,16 @@ export function LocationPicker({ onSelect, geoError, onRetryGeo }: LocationPicke
       <button
         onClick={handleConfirm}
         disabled={!pin}
-        className="rounded-xl bg-zinc-900 px-6 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-40 dark:bg-zinc-100 dark:text-zinc-900"
+        className="w-full rounded-xl bg-zinc-900 px-6 py-3 text-base font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-40 dark:bg-zinc-100 dark:text-zinc-900"
       >
-        Join Room Here
+        {pin ? "Join Room Here" : "Select a location first"}
+      </button>
+
+      <button
+        onClick={() => setShowMap(false)}
+        className="w-full rounded-xl border border-zinc-300 px-6 py-2.5 text-sm font-medium text-zinc-600 dark:border-zinc-600 dark:text-zinc-400"
+      >
+        Back
       </button>
     </div>
   );

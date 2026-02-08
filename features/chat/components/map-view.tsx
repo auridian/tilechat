@@ -2,6 +2,7 @@
 
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 // Fix default marker icon (Leaflet + webpack/bundler issue)
 const defaultIcon = L.icon({
@@ -35,7 +36,7 @@ export default function MapView({ center, pin, onMapClick }: MapViewProps) {
     <MapContainer
       center={center}
       zoom={12}
-      style={{ height: "100%", width: "100%", minHeight: "300px" }}
+      style={{ height: "100%", width: "100%" }}
       attributionControl={false}
     >
       <TileLayer
