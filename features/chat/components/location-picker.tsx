@@ -3,16 +3,9 @@
 import { useState, useCallback, useEffect } from "react";
 import { MapPin, Crosshair } from "lucide-react";
 import dynamic from "next/dynamic";
-import type { ComponentType } from "react";
-
-interface MapViewProps {
-  center: [number, number];
-  pin: { lat: number; lon: number } | null;
-  onMapClick: (lat: number, lon: number) => void;
-}
 
 const MapView = dynamic(
-  () => import("@/features/chat/components/map-view") as Promise<{ default: ComponentType<MapViewProps> }>,
+  () => import("@/features/chat/components/map-view"),
   { ssr: false },
 );
 
