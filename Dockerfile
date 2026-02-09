@@ -19,4 +19,5 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["bun", "run", "start"]
+# Run migrations and start
+CMD ["sh", "-c", "bun run db:migrate && bun run start"]
