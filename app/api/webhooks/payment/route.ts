@@ -27,13 +27,21 @@ async function verifySignature(
   );
 }
 
-export async function GET() {
-  return NextResponse.json({ status: "ok" });
+export async function GET(request: Request) {
+  console.log("[WEBHOOK] GET received:", request.url, "headers:", Object.fromEntries(request.headers.entries()));
+  return NextResponse.json({ status: "ok", ts: new Date().toISOString() });
 }
 
 export async function POST(request: Request) {
   const rawBody = await request.text();
   const signatureHex = request.headers.get("x-webhook-signature") ?? "";
+  
+  console.log("[WEBHOOK] POST received:", {
+    url: request.url,
+    signature: signatureHex ? `${signatureHex.slice(0, 20)}...` : "missing",
+    bodyLength: rawBody.length,
+    contentType: request.headers.get("content-type"),
+  });
 
   if (!signatureHex) {
     return NextResponse.json(
