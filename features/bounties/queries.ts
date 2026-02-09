@@ -161,3 +161,28 @@ export async function deleteBounty(
     .returning();
   return result.length > 0;
 }
+
+export async function updateBounty(
+  bountyId: string,
+  creatorAlienId: string,
+  updates: {
+    title?: string;
+    description?: string | null;
+    rewardAmount?: number | null;
+    rewardToken?: string | null;
+  },
+): Promise<Bounty | null> {
+  // Only allow updating if status is 'open' (not claimed or completed)
+  const [updated] = await db
+    .update(schema.bounties)
+    .set(updates)
+    .where(
+      and(
+        eq(schema.bounties.id, bountyId),
+        eq(schema.bounties.creatorAlienId, creatorAlienId),
+        eq(schema.bounties.status, "open"),
+      ),
+    )
+    .returning();
+  return updated ?? null;
+}

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { extractBearerToken, verifyToken } from "@/features/auth/lib";
-import { claimBounty, completeBounty, deleteBounty, rejectBountyClaim, getBountyById } from "@/features/bounties/queries";
+import { claimBounty, completeBounty, deleteBounty, rejectBountyClaim, getBountyById, updateBounty } from "@/features/bounties/queries";
 import { createNotification } from "@/features/notifications/queries";
 
 export async function PATCH(
@@ -68,6 +68,18 @@ export async function PATCH(
         });
       }
 
+      return NextResponse.json(bounty);
+    }
+
+    if (action === "update") {
+      const { title, description, rewardAmount, rewardToken } = await req.json();
+      const bounty = await updateBounty(id, alienId, {
+        title,
+        description,
+        rewardAmount,
+        rewardToken,
+      });
+      if (!bounty) return NextResponse.json({ error: "Cannot update this bounty (must be open and yours)" }, { status: 400 });
       return NextResponse.json(bounty);
     }
 

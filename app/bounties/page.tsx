@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useAlien } from "@alien_org/react";
-import { Loader2, Plus, Tag, X, DollarSign, CheckCircle, XCircle, CreditCard, Clock, RefreshCw, Inbox, User } from "lucide-react";
+import { Loader2, Plus, Tag, X, DollarSign, CheckCircle, XCircle, CreditCard, Clock, RefreshCw, Inbox, User, Edit3, Trash2, Save } from "lucide-react";
 import toast from "react-hot-toast";
 import { useBountyPayment } from "@/features/payments/hooks/use-bounty-payment";
 
@@ -97,6 +97,12 @@ export default function BountiesPage() {
   const [reward, setReward] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  
+  // Edit state
+  const [editingBounty, setEditingBounty] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editReward, setEditReward] = useState("");
 
   const fetchBounties = useCallback(async (silent = false) => {
     if (!authToken) return;
@@ -246,6 +252,61 @@ export default function BountiesPage() {
       setActionLoading(null);
     }
   }, [authToken, fetchBounties, bountyPayment]);
+
+  const handleUpdate = useCallback(async (bountyId: string) => {
+    if (!authToken) return;
+    setActionLoading(bountyId);
+    try {
+      const res = await fetch(`/api/bounties/${bountyId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({
+          action: "update",
+          title: editTitle.trim(),
+          description: editDescription.trim() || null,
+          rewardAmount: editReward ? parseInt(editReward, 10) : null,
+          rewardToken: editReward ? "USDC" : null,
+        }),
+      });
+      if (res.ok) {
+        toast.success("Bounty updated!");
+        setEditingBounty(null);
+        await fetchBounties();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        toast.error(err.error || "Could not update");
+      }
+    } catch {
+      toast.error("Network error");
+    } finally {
+      setActionLoading(null);
+    }
+  }, [authToken, editTitle, editDescription, editReward, fetchBounties]);
+
+  const handleDelete = useCallback(async (bountyId: string) => {
+    if (!authToken) return;
+    if (!confirm("Delete this bounty? This cannot be undone.")) return;
+    setActionLoading(bountyId);
+    try {
+      const res = await fetch(`/api/bounties/${bountyId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      if (res.ok) {
+        toast.success("Bounty deleted");
+        await fetchBounties();
+      } else {
+        toast.error("Could not delete");
+      }
+    } catch {
+      toast.error("Network error");
+    } finally {
+      setActionLoading(null);
+    }
+  }, [authToken, fetchBounties]);
 
   // Filter bounties based on active tab
   const filteredBounties = bounties.filter((b) => {
@@ -504,6 +565,81 @@ export default function BountiesPage() {
                         <XCircle size={12} />
                         Reject
                       </button>
+                    </>
+                  )}
+                  {/* Poster sees edit/delete for open bounties */}
+                  {isMine && isOpen && (
+                    <>
+                      {editingBounty === bounty.id ? (
+                        <div className="flex flex-1 flex-col gap-2">
+                          <input
+                            type="text"
+                            value={editTitle}
+                            onChange={(e) => setEditTitle(e.target.value)}
+                            className="rounded border border-zinc-200 px-2 py-1 text-xs dark:border-zinc-700 dark:bg-zinc-800"
+                            placeholder="Title"
+                          />
+                          <input
+                            type="text"
+                            value={editDescription}
+                            onChange={(e) => setEditDescription(e.target.value)}
+                            className="rounded border border-zinc-200 px-2 py-1 text-xs dark:border-zinc-700 dark:bg-zinc-800"
+                            placeholder="Description"
+                          />
+                          <div className="flex items-center gap-2">
+                            <DollarSign size={12} className="text-zinc-400" />
+                            <input
+                              type="number"
+                              value={editReward}
+                              onChange={(e) => setEditReward(e.target.value)}
+                              className="flex-1 rounded border border-zinc-200 px-2 py-1 text-xs dark:border-zinc-700 dark:bg-zinc-800"
+                              placeholder="Reward (USDC)"
+                              min={0}
+                            />
+                          </div>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleUpdate(bounty.id)}
+                              disabled={isBusy || !editTitle.trim()}
+                              className="flex flex-1 items-center justify-center gap-1 rounded bg-zinc-900 px-2 py-1.5 text-xs text-white disabled:opacity-40"
+                            >
+                              <Save size={10} />
+                              Save
+                            </button>
+                            <button
+                              onClick={() => setEditingBounty(null)}
+                              disabled={isBusy}
+                              className="rounded border border-zinc-200 px-2 py-1.5 text-xs dark:border-zinc-700"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => {
+                              setEditingBounty(bounty.id);
+                              setEditTitle(bounty.title);
+                              setEditDescription(bounty.description || "");
+                              setEditReward(bounty.rewardAmount?.toString() || "");
+                            }}
+                            disabled={isBusy}
+                            className="flex items-center gap-1 rounded-lg border border-zinc-200 px-3 py-2 text-xs font-medium text-zinc-600 hover:bg-zinc-50 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-400"
+                          >
+                            <Edit3 size={12} />
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(bounty.id)}
+                            disabled={isBusy}
+                            className="flex items-center gap-1 rounded-lg border border-red-200 px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-40 dark:border-red-800 dark:text-red-400"
+                          >
+                            <Trash2 size={12} />
+                            Delete
+                          </button>
+                        </>
+                      )}
                     </>
                   )}
                   {/* Non-poster sees claim button on open bounties */}
