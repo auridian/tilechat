@@ -288,6 +288,36 @@ export default function BountiesPage() {
           {showCreate ? <X size={14} /> : <Plus size={14} />}
           {showCreate ? "Cancel" : "Post"}
         </button>
+        <button
+          onClick={async () => {
+            if (!authToken) return;
+            toast.promise(
+              fetch("/api/bounties", {
+                method: "POST",
+                headers: { 
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${authToken}` 
+                },
+                body: JSON.stringify({
+                  title: "TEST: Claim this bounty",
+                  description: "This is a test bounty. Click Claim This to test the flow.",
+                  rewardAmount: 1,
+                  rewardToken: "USDC",
+                }),
+              }).then(r => { if (!r.ok) throw new Error("Failed"); return r.json(); }),
+              {
+                loading: "Creating test bounty...",
+                success: "Test bounty created! Switch to 'Open' tab to see it.",
+                error: "Failed to create test bounty",
+              }
+            );
+          }}
+          className="flex items-center gap-1 rounded-lg border border-dashed border-zinc-400 px-3 py-2 text-xs font-medium text-zinc-600 hover:bg-zinc-50 dark:border-zinc-600 dark:text-zinc-400"
+          title="Create a test bounty you can claim"
+        >
+          <Tag size={14} />
+          Test Bounty
+        </button>
       </div>
 
       {showCreate && (
@@ -416,6 +446,9 @@ export default function BountiesPage() {
                         claimed by {stubId(bounty.claimedByAlienId)}
                       </span>
                     )}
+                    <span className="text-[10px] text-red-500 font-mono">
+                      DEBUG: status={bounty.status} isMine={String(isMine)} currentAlienId={currentAlienId?.slice(0,6)} creator={bounty.creatorAlienId.slice(0,6)}
+                    </span>
                   </div>
                 </div>
                 <div className="flex flex-col items-end gap-1.5">
