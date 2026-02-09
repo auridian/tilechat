@@ -35,41 +35,7 @@ function timeAgo(ts: string): string {
   return `${Math.floor(hrs / 24)}d ago`;
 }
 
-const DEMO_BOUNTIES: Bounty[] = [
-  {
-    id: "demo-b1",
-    creatorAlienId: "0xA3f7...c9E2",
-    title: "Need a phone charger (USB-C)",
-    description: "Left mine at home, will pay for a loaner for an hour",
-    rewardAmount: 5,
-    rewardToken: "USDC",
-    status: "open",
-    claimedByAlienId: null,
-    createdAt: new Date(Date.now() - 20 * 60000).toISOString(),
-  },
-  {
-    id: "demo-b2",
-    creatorAlienId: "0xF2c8...11aB",
-    title: "Recommend a good lunch spot nearby",
-    description: "Looking for something quick and not too expensive",
-    rewardAmount: 2,
-    rewardToken: "USDC",
-    status: "open",
-    claimedByAlienId: null,
-    createdAt: new Date(Date.now() - 45 * 60000).toISOString(),
-  },
-  {
-    id: "demo-b3",
-    creatorAlienId: "0xF2c8...11aB",
-    title: "Walking buddy for the park trail",
-    description: "Going for a walk in 30 min, anyone want to join?",
-    rewardAmount: null,
-    rewardToken: null,
-    status: "open",
-    claimedByAlienId: null,
-    createdAt: new Date(Date.now() - 10 * 60000).toISOString(),
-  },
-];
+const DEMO_BOUNTIES: Bounty[] = [];
 
 function statusBadge(status: string) {
   switch (status) {
