@@ -14,7 +14,7 @@ export function useBountyPayment({
   onCancelled,
   onFailed,
 }: UseBountyPaymentOptions) {
-  const { authToken } = useAlien();
+  const { authToken, isBridgeAvailable } = useAlien();
 
   const payment = usePayment({
     onPaid,
@@ -24,7 +24,9 @@ export function useBountyPayment({
 
   const payBounty = useCallback(
     async (bountyId: string) => {
-      if (!authToken) return;
+      if (!authToken) throw new Error("Not authenticated");
+      if (!isBridgeAvailable) throw new Error("Payments only available in Alien app");
+      if (!payment.supported) throw new Error("Payments not supported on this device");
 
       const res = await fetch(`/api/bounties/${bountyId}/pay`, {
         method: "POST",
@@ -50,7 +52,7 @@ export function useBountyPayment({
         item: data.item,
       });
     },
-    [authToken, payment],
+    [authToken, isBridgeAvailable, payment],
   );
 
   return {
@@ -63,6 +65,7 @@ export function useBountyPayment({
     txHash: payment.txHash,
     error: payment.error,
     reset: payment.reset,
-    supported: payment.supported,
+    supported: payment.supported && isBridgeAvailable,
+    isBridgeAvailable,
   };
 }

@@ -118,3 +118,15 @@ export const notifications = pgTable("notifications", {
 });
 
 export type Notification = typeof notifications.$inferSelect;
+
+export const votes = pgTable("votes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  postId: text("post_id").notNull(),
+  voterAlienId: text("voter_alien_id").notNull(),
+  authorAlienId: text("author_alien_id").notNull(),
+  direction: text("direction").notNull(), // "up" or "down"
+  weight: integer("weight").notNull().default(1),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export type Vote = typeof votes.$inferSelect;

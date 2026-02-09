@@ -118,6 +118,7 @@ export function ChatRoom() {
           onSend={chat.post}
           isPosting={chat.isPosting}
           cooldownRemaining={chat.cooldownRemaining}
+          authToken={authToken ?? undefined}
         />
       </div>
     );

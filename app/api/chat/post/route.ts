@@ -2,10 +2,10 @@ import { NextResponse } from "next/server";
 import { verifyToken, extractBearerToken } from "@/features/auth/lib";
 import { findOrCreateUser } from "@/features/user/queries";
 import { getSessionForRoom, createPost, updateLastPostAt } from "@/features/chat/queries";
+import { getUserCooldown } from "@/features/reputation/queries";
 import { JwtErrors } from "@alien_org/auth-client";
 
 const MAX_BODY_LENGTH = 280;
-const COOLDOWN_MS = 90 * 1000; // 90 seconds
 
 export async function POST(request: Request) {
   try {
@@ -41,11 +41,14 @@ export async function POST(request: Request) {
       );
     }
 
+    // Reputation-based cooldown
+    const cooldownMs = await getUserCooldown(sub);
+
     // Cooldown check
     if (session.lastPostAt) {
       const elapsed = Date.now() - session.lastPostAt.getTime();
-      if (elapsed < COOLDOWN_MS) {
-        const remaining = Math.ceil((COOLDOWN_MS - elapsed) / 1000);
+      if (elapsed < cooldownMs) {
+        const remaining = Math.ceil((cooldownMs - elapsed) / 1000);
         return NextResponse.json(
           { error: `Cooldown active. Wait ${remaining}s before posting again.`, remaining },
           { status: 429 },

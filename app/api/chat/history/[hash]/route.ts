@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { verifyToken, extractBearerToken } from "@/features/auth/lib";
 import { getRecentPosts, getRoomMemberCount } from "@/features/chat/queries";
+import { getVotesForPosts } from "@/features/reputation/queries";
 import { JwtErrors } from "@alien_org/auth-client";
 
 export async function GET(
@@ -13,7 +14,7 @@ export async function GET(
       return NextResponse.json({ error: "Missing authorization token" }, { status: 401 });
     }
 
-    await verifyToken(token);
+    const { sub: alienId } = await verifyToken(token);
 
     const { hash } = await params;
 
@@ -24,6 +25,10 @@ export async function GET(
     const posts = await getRecentPosts(hash, 50);
     const memberCount = await getRoomMemberCount(hash);
 
+    // Get vote counts for all posts
+    const postIds = posts.map(p => p.id);
+    const votes = await getVotesForPosts(postIds, alienId);
+
     return NextResponse.json({
       hash,
       memberCount,
@@ -32,6 +37,7 @@ export async function GET(
         alienId: p.alienId,
         body: p.body,
         ts: p.ts.toISOString(),
+        votes: votes[p.id] || { up: 0, down: 0, score: 0, userVote: null },
       })),
     });
   } catch (error) {

@@ -15,7 +15,7 @@ export function useDiamondPurchase({
   onCancelled,
   onFailed,
 }: UseDiamondPurchaseOptions) {
-  const { authToken } = useAlien();
+  const { authToken, isBridgeAvailable } = useAlien();
 
   const payment = usePayment({
     onPaid,
@@ -25,7 +25,9 @@ export function useDiamondPurchase({
 
   const purchase = useCallback(
     async (productId: string) => {
-      if (!authToken) return;
+      if (!authToken) throw new Error("Not authenticated");
+      if (!isBridgeAvailable) throw new Error("Payments only available in Alien app");
+      if (!payment.supported) throw new Error("Payments not supported on this device");
 
       const res = await fetch("/api/invoices", {
         method: "POST",
@@ -53,7 +55,7 @@ export function useDiamondPurchase({
         test: data.test,
       });
     },
-    [authToken, payment],
+    [authToken, isBridgeAvailable, payment],
   );
 
   return {
@@ -67,6 +69,7 @@ export function useDiamondPurchase({
     error: payment.error,
     errorCode: payment.errorCode,
     reset: payment.reset,
-    supported: payment.supported,
+    supported: payment.supported && isBridgeAvailable,
+    isBridgeAvailable,
   };
 }
