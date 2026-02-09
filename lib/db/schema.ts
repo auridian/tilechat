@@ -104,3 +104,17 @@ export const bounties = pgTable("bounties", {
 });
 
 export type Bounty = typeof bounties.$inferSelect;
+
+export const notifications = pgTable("notifications", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  recipientAlienId: text("recipient_alien_id").notNull(),
+  type: text("type").notNull(),
+  title: text("title").notNull(),
+  body: text("body"),
+  bountyId: text("bounty_id"),
+  fromAlienId: text("from_alien_id"),
+  read: text("read").notNull().default("false"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export type Notification = typeof notifications.$inferSelect;

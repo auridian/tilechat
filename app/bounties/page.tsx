@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useAlien } from "@alien_org/react";
-import { Loader2, Plus, Tag, X, DollarSign, CheckCircle } from "lucide-react";
+import { Loader2, Plus, Tag, X, DollarSign, CheckCircle, XCircle, CreditCard, Clock } from "lucide-react";
+import { useBountyPayment } from "@/features/payments/hooks/use-bounty-payment";
 
 interface Bounty {
   id: string;
@@ -67,10 +68,36 @@ const DEMO_BOUNTIES: Bounty[] = [
   },
 ];
 
+function statusBadge(status: string) {
+  switch (status) {
+    case "open":
+      return (
+        <span className="flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-medium text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
+          <Clock size={9} /> Open
+        </span>
+      );
+    case "claimed":
+      return (
+        <span className="flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-medium text-amber-600 dark:bg-amber-900/20 dark:text-amber-400">
+          <CheckCircle size={9} /> Claimed
+        </span>
+      );
+    case "completed":
+      return (
+        <span className="flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-[10px] font-medium text-green-600 dark:bg-green-900/20 dark:text-green-400">
+          <CheckCircle size={9} /> Paid
+        </span>
+      );
+    default:
+      return null;
+  }
+}
+
 export default function BountiesPage() {
   const { authToken: alienToken, isBridgeAvailable } = useAlien();
   const [devToken, setDevToken] = useState<string | null>(null);
   const authToken = alienToken || devToken;
+  const [currentAlienId, setCurrentAlienId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isBridgeAvailable && !alienToken && !devToken) {
@@ -83,6 +110,15 @@ export default function BountiesPage() {
     }
   }, [isBridgeAvailable, alienToken, devToken]);
 
+  // Get current alien ID from /api/me
+  useEffect(() => {
+    if (!authToken) return;
+    fetch("/api/me", { headers: { Authorization: `Bearer ${authToken}` } })
+      .then((r) => r.ok ? r.json() : null)
+      .then((d) => { if (d?.alienId) setCurrentAlienId(d.alienId); })
+      .catch(() => {});
+  }, [authToken]);
+
   const [bounties, setBounties] = useState<Bounty[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
@@ -90,6 +126,7 @@ export default function BountiesPage() {
   const [description, setDescription] = useState("");
   const [reward, setReward] = useState("");
   const [isCreating, setIsCreating] = useState(false);
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   const fetchBounties = useCallback(async () => {
     if (!authToken) return;
@@ -116,11 +153,19 @@ export default function BountiesPage() {
     if (authToken) fetchBounties();
   }, [authToken, fetchBounties]);
 
+  const bountyPayment = useBountyPayment({
+    onPaid: () => {
+      fetchBounties();
+    },
+    onCancelled: () => {},
+    onFailed: () => {},
+  });
+
   const handleCreate = useCallback(async () => {
     if (!authToken || !title.trim()) return;
     setIsCreating(true);
     try {
-      const posStr = sessionStorage.getItem("tile-chatter-position");
+      const posStr = typeof window !== "undefined" ? sessionStorage.getItem("tile-chatter-position") : null;
       const pos = posStr ? JSON.parse(posStr) : {};
       const res = await fetch("/api/bounties", {
         method: "POST",
@@ -144,26 +189,33 @@ export default function BountiesPage() {
         setShowCreate(false);
         await fetchBounties();
       }
-    } catch {}
-    finally {
+    } catch {} finally {
       setIsCreating(false);
     }
   }, [authToken, title, description, reward, fetchBounties]);
 
-  const handleClaim = useCallback(async (bountyId: string) => {
+  const handleAction = useCallback(async (bountyId: string, action: string) => {
     if (!authToken || bountyId.startsWith("demo-")) return;
+    setActionLoading(bountyId);
     try {
-      await fetch(`/api/bounties/${bountyId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authToken}`,
-        },
-        body: JSON.stringify({ action: "claim" }),
-      });
-      await fetchBounties();
-    } catch {}
-  }, [authToken, fetchBounties]);
+      if (action === "pay") {
+        await bountyPayment.payBounty(bountyId);
+        // Payment flow is async via bridge, fetchBounties called in onPaid
+      } else {
+        await fetch(`/api/bounties/${bountyId}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: JSON.stringify({ action }),
+        });
+        await fetchBounties();
+      }
+    } catch {} finally {
+      setActionLoading(null);
+    }
+  }, [authToken, fetchBounties, bountyPayment]);
 
   return (
     <>
@@ -173,7 +225,7 @@ export default function BountiesPage() {
             Bounties
           </h1>
           <p className="mt-1 text-sm text-zinc-400 dark:text-zinc-500">
-            Requests from people nearby. Help out and earn.
+            Post requests, claim tasks, earn crypto.
           </p>
         </div>
         <button
@@ -233,56 +285,121 @@ export default function BountiesPage() {
       )}
 
       <div className="flex flex-col gap-2">
-        {bounties.map((bounty) => (
-          <div
-            key={bounty.id}
-            className="rounded-xl border border-zinc-200/60 bg-white p-4 dark:border-zinc-800/60 dark:bg-zinc-900"
-          >
-            <div className="flex items-start justify-between gap-2">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <Tag size={14} className="shrink-0 text-amber-500" />
-                  <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
-                    {bounty.title}
-                  </span>
+        {bounties.map((bounty) => {
+          const isDemo = bounty.id.startsWith("demo-");
+          const isMine = currentAlienId === bounty.creatorAlienId;
+          const isClaimed = bounty.status === "claimed";
+          const isOpen = bounty.status === "open";
+          const isCompleted = bounty.status === "completed";
+          const isBusy = actionLoading === bounty.id;
+
+          return (
+            <div
+              key={bounty.id}
+              className="rounded-xl border border-zinc-200/60 bg-white p-4 dark:border-zinc-800/60 dark:bg-zinc-900"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <Tag size={14} className="shrink-0 text-amber-500" />
+                    <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate">
+                      {bounty.title}
+                    </span>
+                  </div>
+                  {bounty.description && (
+                    <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                      {bounty.description}
+                    </p>
+                  )}
+                  <div className="mt-1.5 flex items-center gap-3">
+                    <span className="text-[10px] text-zinc-400">
+                      {isMine ? "You posted" : `by ${stubId(bounty.creatorAlienId)}`}
+                    </span>
+                    <span className="text-[10px] text-zinc-400">
+                      {timeAgo(bounty.createdAt)}
+                    </span>
+                    {isClaimed && bounty.claimedByAlienId && (
+                      <span className="text-[10px] text-amber-500">
+                        claimed by {stubId(bounty.claimedByAlienId)}
+                      </span>
+                    )}
+                  </div>
                 </div>
-                {bounty.description && (
-                  <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                    {bounty.description}
-                  </p>
-                )}
-                <div className="mt-1.5 flex items-center gap-3">
-                  <span className="text-[10px] text-zinc-400">
-                    by {stubId(bounty.creatorAlienId)}
-                  </span>
-                  <span className="text-[10px] text-zinc-400">
-                    {timeAgo(bounty.createdAt)}
-                  </span>
+                <div className="flex flex-col items-end gap-1.5">
+                  {bounty.rewardAmount ? (
+                    <span className="rounded-full bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-700 dark:bg-green-900/20 dark:text-green-400">
+                      ${bounty.rewardAmount} {bounty.rewardToken}
+                    </span>
+                  ) : null}
+                  {statusBadge(bounty.status)}
                 </div>
               </div>
-              <div className="flex flex-col items-end gap-1.5">
-                {bounty.rewardAmount && (
-                  <span className="rounded-full bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-700 dark:bg-green-900/20 dark:text-green-400">
-                    ${bounty.rewardAmount} {bounty.rewardToken}
-                  </span>
-                )}
-                {bounty.status === "open" && !bounty.id.startsWith("demo-") && (
-                  <button
-                    onClick={() => handleClaim(bounty.id)}
-                    className="rounded-lg border border-zinc-200 px-2.5 py-1 text-[11px] font-medium text-zinc-600 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800"
-                  >
-                    Claim
-                  </button>
-                )}
-                {bounty.status === "claimed" && (
-                  <span className="flex items-center gap-1 text-[11px] text-blue-500">
-                    <CheckCircle size={10} /> Claimed
-                  </span>
-                )}
-              </div>
+
+              {/* Action buttons */}
+              {!isDemo && !isCompleted && (
+                <div className="mt-3 flex items-center gap-2">
+                  {/* Poster sees accept+pay / reject when claimed */}
+                  {isMine && isClaimed && bounty.rewardAmount && (
+                    <>
+                      <button
+                        onClick={() => handleAction(bounty.id, "pay")}
+                        disabled={isBusy}
+                        className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-green-600 px-3 py-2 text-xs font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+                      >
+                        <CreditCard size={12} />
+                        {isBusy ? "Processing..." : `Accept + Pay $${bounty.rewardAmount}`}
+                      </button>
+                      <button
+                        onClick={() => handleAction(bounty.id, "reject")}
+                        disabled={isBusy}
+                        className="flex items-center gap-1 rounded-lg border border-red-200 px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-40 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/20"
+                      >
+                        <XCircle size={12} />
+                        Reject
+                      </button>
+                    </>
+                  )}
+                  {/* Poster sees complete/reject for no-reward bounties */}
+                  {isMine && isClaimed && !bounty.rewardAmount && (
+                    <>
+                      <button
+                        onClick={() => handleAction(bounty.id, "complete")}
+                        disabled={isBusy}
+                        className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-green-600 px-3 py-2 text-xs font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+                      >
+                        <CheckCircle size={12} />
+                        {isBusy ? "..." : "Mark Complete"}
+                      </button>
+                      <button
+                        onClick={() => handleAction(bounty.id, "reject")}
+                        disabled={isBusy}
+                        className="flex items-center gap-1 rounded-lg border border-red-200 px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-40 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/20"
+                      >
+                        <XCircle size={12} />
+                        Reject
+                      </button>
+                    </>
+                  )}
+                  {/* Non-poster sees claim button on open bounties */}
+                  {!isMine && isOpen && (
+                    <button
+                      onClick={() => handleAction(bounty.id, "claim")}
+                      disabled={isBusy}
+                      className="flex items-center gap-1.5 rounded-lg border border-zinc-200 px-3 py-2 text-xs font-medium text-zinc-600 hover:bg-zinc-50 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800"
+                    >
+                      {isBusy ? <Loader2 size={12} className="animate-spin" /> : <CheckCircle size={12} />}
+                      {isBusy ? "Claiming..." : "Claim This"}
+                    </button>
+                  )}
+                  {/* Non-poster sees waiting status on claimed */}
+                  {!isMine && isClaimed && bounty.claimedByAlienId === currentAlienId && (
+                    <span className="text-xs text-amber-500">Waiting for poster to review your claim...</span>
+                  )}
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {!isLoading && bounties.length === 0 && (

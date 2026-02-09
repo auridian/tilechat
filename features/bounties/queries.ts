@@ -80,6 +80,45 @@ export async function completeBounty(
   return updated ?? null;
 }
 
+export async function getBountyById(bountyId: string): Promise<Bounty | null> {
+  const bounty = await db.query.bounties.findFirst({
+    where: eq(schema.bounties.id, bountyId),
+  });
+  return bounty ?? null;
+}
+
+export async function rejectBountyClaim(
+  bountyId: string,
+  creatorAlienId: string,
+): Promise<Bounty | null> {
+  // First get the bounty to capture the claimer before we clear it
+  const existing = await getBountyById(bountyId);
+  if (!existing || existing.creatorAlienId !== creatorAlienId || existing.status !== "claimed") {
+    return null;
+  }
+
+  const [updated] = await db
+    .update(schema.bounties)
+    .set({
+      status: "open",
+      claimedByAlienId: null,
+    })
+    .where(
+      and(
+        eq(schema.bounties.id, bountyId),
+        eq(schema.bounties.creatorAlienId, creatorAlienId),
+        eq(schema.bounties.status, "claimed"),
+      ),
+    )
+    .returning();
+
+  // Return with the original claimer info so the API can notify them
+  if (updated) {
+    return { ...updated, claimedByAlienId: existing.claimedByAlienId };
+  }
+  return null;
+}
+
 export async function deleteBounty(
   bountyId: string,
   creatorAlienId: string,

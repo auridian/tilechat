@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { extractBearerToken, verifyToken } from "@/features/auth/lib";
-import { claimBounty, completeBounty, deleteBounty } from "@/features/bounties/queries";
+import { claimBounty, completeBounty, deleteBounty, rejectBountyClaim, getBountyById } from "@/features/bounties/queries";
+import { createNotification } from "@/features/notifications/queries";
 
 export async function PATCH(
   req: NextRequest,
@@ -17,12 +18,56 @@ export async function PATCH(
     if (action === "claim") {
       const bounty = await claimBounty(id, alienId);
       if (!bounty) return NextResponse.json({ error: "Cannot claim this bounty" }, { status: 400 });
+
+      // Notify the bounty poster that someone claimed it
+      await createNotification({
+        recipientAlienId: bounty.creatorAlienId,
+        type: "bounty_claimed",
+        title: "Someone claimed your bounty",
+        body: `"${bounty.title}" was claimed. Review and accept to pay, or reject.`,
+        bountyId: bounty.id,
+        fromAlienId: alienId,
+      });
+
+      return NextResponse.json(bounty);
+    }
+
+    if (action === "reject") {
+      // Only the poster can reject a claim
+      const bounty = await rejectBountyClaim(id, alienId);
+      if (!bounty) return NextResponse.json({ error: "Cannot reject this claim" }, { status: 400 });
+
+      // Notify the claimer that their claim was rejected
+      if (bounty.claimedByAlienId) {
+        await createNotification({
+          recipientAlienId: bounty.claimedByAlienId,
+          type: "bounty_rejected",
+          title: "Your bounty claim was rejected",
+          body: `Your claim on "${bounty.title}" was rejected. The bounty is open again.`,
+          bountyId: bounty.id,
+          fromAlienId: alienId,
+        });
+      }
+
       return NextResponse.json(bounty);
     }
 
     if (action === "complete") {
       const bounty = await completeBounty(id, alienId);
       if (!bounty) return NextResponse.json({ error: "Cannot complete this bounty" }, { status: 400 });
+
+      // Notify the claimer that the bounty was completed (payment sent)
+      if (bounty.claimedByAlienId) {
+        await createNotification({
+          recipientAlienId: bounty.claimedByAlienId,
+          type: "bounty_completed",
+          title: "Bounty payment sent!",
+          body: `The poster accepted your claim on "${bounty.title}" and sent payment.`,
+          bountyId: bounty.id,
+          fromAlienId: alienId,
+        });
+      }
+
       return NextResponse.json(bounty);
     }
 

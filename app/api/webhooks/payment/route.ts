@@ -3,6 +3,8 @@ import { eq } from "drizzle-orm";
 import { getServerEnv } from "@/lib/env";
 import { WebhookPayload } from "@/features/payments/dto";
 import { db, schema } from "@/lib/db";
+import { completeBounty, getBountyById } from "@/features/bounties/queries";
+import { createNotification } from "@/features/notifications/queries";
 
 async function verifySignature(
   publicKeyHex: string,
@@ -101,6 +103,26 @@ export async function POST(request: Request) {
         payload,
       });
     });
+
+    // If this payment is for a bounty, mark it as completed
+    if (intent.productId?.startsWith("bounty:") && payload.status === "finalized") {
+      const bountyId = intent.productId.slice(7);
+      try {
+        const bounty = await completeBounty(bountyId, intent.senderAlienId);
+        if (bounty?.claimedByAlienId) {
+          await createNotification({
+            recipientAlienId: bounty.claimedByAlienId,
+            type: "bounty_completed",
+            title: "Bounty payment confirmed!",
+            body: `Payment for "${bounty.title}" has been confirmed on-chain.`,
+            bountyId: bounty.id,
+            fromAlienId: intent.senderAlienId,
+          });
+        }
+      } catch (bountyErr) {
+        console.error("Failed to complete bounty after payment:", bountyErr);
+      }
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
