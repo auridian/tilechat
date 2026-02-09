@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { extractBearerToken, verifyToken } from "@/features/auth/lib";
-import { createBounty, getOpenBounties } from "@/features/bounties/queries";
+import { createBounty, getRelevantBounties } from "@/features/bounties/queries";
 
 export async function GET(req: NextRequest) {
   try {
     const token = extractBearerToken(req.headers.get("authorization"));
     if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    await verifyToken(token);
+    const { sub: alienId } = await verifyToken(token);
 
-    const bounties = await getOpenBounties();
+    const bounties = await getRelevantBounties(alienId);
     return NextResponse.json({ bounties });
   } catch (e: any) {
     console.error("bounties GET error:", e);

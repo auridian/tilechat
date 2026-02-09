@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useAlien } from "@alien_org/react";
-import { Loader2, Plus, Tag, X, DollarSign, CheckCircle, XCircle, CreditCard, Clock } from "lucide-react";
+import { Loader2, Plus, Tag, X, DollarSign, CheckCircle, XCircle, CreditCard, Clock, RefreshCw, Inbox, User } from "lucide-react";
+import toast from "react-hot-toast";
 import { useBountyPayment } from "@/features/payments/hooks/use-bounty-payment";
 
 interface Bounty {
@@ -16,6 +17,8 @@ interface Bounty {
   claimedByAlienId: string | null;
   createdAt: string;
 }
+
+type TabFilter = "open" | "posted" | "claimed" | "all";
 
 function stubId(alienId: string): string {
   if (alienId.length <= 12) return alienId;
@@ -98,6 +101,7 @@ export default function BountiesPage() {
   const [devToken, setDevToken] = useState<string | null>(null);
   const authToken = alienToken || devToken;
   const [currentAlienId, setCurrentAlienId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<TabFilter>("all");
 
   useEffect(() => {
     if (!isBridgeAvailable && !alienToken && !devToken) {
@@ -128,9 +132,9 @@ export default function BountiesPage() {
   const [isCreating, setIsCreating] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
-  const fetchBounties = useCallback(async () => {
+  const fetchBounties = useCallback(async (silent = false) => {
     if (!authToken) return;
-    setIsLoading(true);
+    if (!silent) setIsLoading(true);
     try {
       const res = await fetch("/api/bounties", {
         headers: { Authorization: `Bearer ${authToken}` },
@@ -145,7 +149,7 @@ export default function BountiesPage() {
     } catch {
       setBounties([...DEMO_BOUNTIES]);
     } finally {
-      setIsLoading(false);
+      if (!silent) setIsLoading(false);
     }
   }, [authToken]);
 
@@ -153,12 +157,26 @@ export default function BountiesPage() {
     if (authToken) fetchBounties();
   }, [authToken, fetchBounties]);
 
+  // Auto-refresh every 30 seconds to see status changes
+  useEffect(() => {
+    if (!authToken) return;
+    const interval = setInterval(() => {
+      fetchBounties(true);
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [authToken, fetchBounties]);
+
   const bountyPayment = useBountyPayment({
     onPaid: () => {
+      toast.success("Payment sent! Bounty completed.");
       fetchBounties();
     },
-    onCancelled: () => {},
-    onFailed: () => {},
+    onCancelled: () => {
+      toast("Payment cancelled", { icon: "⚠️" });
+    },
+    onFailed: () => {
+      toast.error("Payment failed. Try again?");
+    },
   });
 
   const handleCreate = useCallback(async () => {
@@ -183,26 +201,34 @@ export default function BountiesPage() {
         }),
       });
       if (res.ok) {
+        toast.success("Bounty posted!");
         setTitle("");
         setDescription("");
         setReward("");
         setShowCreate(false);
         await fetchBounties();
+      } else {
+        toast.error("Failed to post bounty");
       }
-    } catch {} finally {
+    } catch {
+      toast.error("Network error");
+    } finally {
       setIsCreating(false);
     }
   }, [authToken, title, description, reward, fetchBounties]);
 
-  const handleAction = useCallback(async (bountyId: string, action: string) => {
-    if (!authToken || bountyId.startsWith("demo-")) return;
+  const handleAction = useCallback(async (bountyId: string, action: string, bountyTitle: string) => {
+    if (!authToken || bountyId.startsWith("demo-")) {
+      toast("Demo bounties can't be claimed", { icon: "ℹ️" });
+      return;
+    }
     setActionLoading(bountyId);
     try {
       if (action === "pay") {
         await bountyPayment.payBounty(bountyId);
         // Payment flow is async via bridge, fetchBounties called in onPaid
-      } else {
-        await fetch(`/api/bounties/${bountyId}`, {
+      } else if (action === "claim") {
+        const res = await fetch(`/api/bounties/${bountyId}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -210,12 +236,73 @@ export default function BountiesPage() {
           },
           body: JSON.stringify({ action }),
         });
-        await fetchBounties();
+        if (res.ok) {
+          toast.success("Claimed! Waiting for poster to review...");
+          await fetchBounties();
+        } else {
+          const err = await res.json().catch(() => ({}));
+          toast.error(err.error || "Could not claim");
+        }
+      } else if (action === "reject") {
+        const res = await fetch(`/api/bounties/${bountyId}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: JSON.stringify({ action }),
+        });
+        if (res.ok) {
+          toast.success("Claim rejected. Bounty reopened.");
+          await fetchBounties();
+        } else {
+          toast.error("Could not reject claim");
+        }
+      } else if (action === "complete") {
+        const res = await fetch(`/api/bounties/${bountyId}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: JSON.stringify({ action }),
+        });
+        if (res.ok) {
+          toast.success("Bounty marked complete!");
+          await fetchBounties();
+        } else {
+          toast.error("Could not complete");
+        }
       }
-    } catch {} finally {
+    } catch {
+      toast.error("Network error");
+    } finally {
       setActionLoading(null);
     }
   }, [authToken, fetchBounties, bountyPayment]);
+
+  // Filter bounties based on active tab
+  const filteredBounties = bounties.filter((b) => {
+    const isDemo = b.id.startsWith("demo-");
+    if (isDemo) return true; // Always show demo bounties
+
+    switch (activeTab) {
+      case "open":
+        return b.status === "open" && b.creatorAlienId !== currentAlienId;
+      case "posted":
+        return b.creatorAlienId === currentAlienId;
+      case "claimed":
+        return b.claimedByAlienId === currentAlienId;
+      case "all":
+      default:
+        return true;
+    }
+  });
+
+  // Count badges for tabs
+  const openCount = bounties.filter(b => b.status === "open" && b.creatorAlienId !== currentAlienId && !b.id.startsWith("demo-")).length;
+  const postedCount = bounties.filter(b => b.creatorAlienId === currentAlienId && !b.id.startsWith("demo-")).length;
+  const claimedCount = bounties.filter(b => b.claimedByAlienId === currentAlienId && !b.id.startsWith("demo-")).length;
 
   return (
     <>
@@ -278,14 +365,54 @@ export default function BountiesPage() {
         </div>
       )}
 
-      {isLoading && (
+      {/* Filter tabs */}
+      <div className="flex items-center gap-1 overflow-x-auto pb-1">
+        {[
+          { key: "all", label: "All", icon: Inbox, count: null },
+          { key: "open", label: "Open", icon: Clock, count: openCount },
+          { key: "posted", label: "My Posted", icon: User, count: postedCount },
+          { key: "claimed", label: "My Claims", icon: Tag, count: claimedCount },
+        ].map(({ key, label, icon: Icon, count }) => (
+          <button
+            key={key}
+            onClick={() => setActiveTab(key as TabFilter)}
+            className={`flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+              activeTab === key
+                ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
+                : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
+            }`}
+          >
+            <Icon size={12} />
+            {label}
+            {count !== null && count > 0 && (
+              <span className={`ml-0.5 rounded-full px-1.5 py-0.5 text-[10px] ${
+                activeTab === key
+                  ? "bg-white/20 text-white dark:bg-black/20 dark:text-zinc-900"
+                  : "bg-zinc-200 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-400"
+              }`}>
+                {count}
+              </span>
+            )}
+          </button>
+        ))}
+        <button
+          onClick={() => fetchBounties()}
+          disabled={isLoading}
+          className="ml-auto rounded-full p-1.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 disabled:opacity-40 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-400"
+          title="Refresh"
+        >
+          <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} />
+        </button>
+      </div>
+
+      {isLoading && filteredBounties.length === 0 && (
         <div className="flex items-center justify-center py-12">
           <Loader2 size={24} className="animate-spin text-zinc-400" />
         </div>
       )}
 
       <div className="flex flex-col gap-2">
-        {bounties.map((bounty) => {
+        {filteredBounties.map((bounty) => {
           const isDemo = bounty.id.startsWith("demo-");
           const isMine = currentAlienId === bounty.creatorAlienId;
           const isClaimed = bounty.status === "claimed";
@@ -342,15 +469,15 @@ export default function BountiesPage() {
                   {isMine && isClaimed && bounty.rewardAmount && (
                     <>
                       <button
-                        onClick={() => handleAction(bounty.id, "pay")}
+                        onClick={() => handleAction(bounty.id, "pay", bounty.title)}
                         disabled={isBusy}
                         className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-green-600 px-3 py-2 text-xs font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-40"
                       >
                         <CreditCard size={12} />
-                        {isBusy ? "Processing..." : `Accept + Pay $${bounty.rewardAmount}`}
+                        {isBusy ? "Opening..." : `Accept + Pay $${bounty.rewardAmount}`}
                       </button>
                       <button
-                        onClick={() => handleAction(bounty.id, "reject")}
+                        onClick={() => handleAction(bounty.id, "reject", bounty.title)}
                         disabled={isBusy}
                         className="flex items-center gap-1 rounded-lg border border-red-200 px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-40 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/20"
                       >
@@ -363,7 +490,7 @@ export default function BountiesPage() {
                   {isMine && isClaimed && !bounty.rewardAmount && (
                     <>
                       <button
-                        onClick={() => handleAction(bounty.id, "complete")}
+                        onClick={() => handleAction(bounty.id, "complete", bounty.title)}
                         disabled={isBusy}
                         className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-green-600 px-3 py-2 text-xs font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-40"
                       >
@@ -371,7 +498,7 @@ export default function BountiesPage() {
                         {isBusy ? "..." : "Mark Complete"}
                       </button>
                       <button
-                        onClick={() => handleAction(bounty.id, "reject")}
+                        onClick={() => handleAction(bounty.id, "reject", bounty.title)}
                         disabled={isBusy}
                         className="flex items-center gap-1 rounded-lg border border-red-200 px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-40 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/20"
                       >
@@ -383,7 +510,7 @@ export default function BountiesPage() {
                   {/* Non-poster sees claim button on open bounties */}
                   {!isMine && isOpen && (
                     <button
-                      onClick={() => handleAction(bounty.id, "claim")}
+                      onClick={() => handleAction(bounty.id, "claim", bounty.title)}
                       disabled={isBusy}
                       className="flex items-center gap-1.5 rounded-lg border border-zinc-200 px-3 py-2 text-xs font-medium text-zinc-600 hover:bg-zinc-50 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800"
                     >
@@ -402,11 +529,14 @@ export default function BountiesPage() {
         })}
       </div>
 
-      {!isLoading && bounties.length === 0 && (
+      {!isLoading && filteredBounties.length === 0 && (
         <div className="rounded-xl border border-zinc-200/60 bg-white p-6 text-center dark:border-zinc-800/60 dark:bg-zinc-900">
           <Tag size={32} className="mx-auto mb-3 text-zinc-300" />
           <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            No bounties yet. Be the first to post one.
+            {activeTab === "open" && "No open bounties right now. Check back later!"}
+            {activeTab === "posted" && "You haven't posted any bounties yet."}
+            {activeTab === "claimed" && "You haven't claimed any bounties yet."}
+            {activeTab === "all" && "No bounties yet. Be the first to post one!"}
           </p>
         </div>
       )}

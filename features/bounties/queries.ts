@@ -33,11 +33,38 @@ export async function getBountiesByUser(alienId: string): Promise<Bounty[]> {
   });
 }
 
-export async function getOpenBounties(limit = 50): Promise<Bounty[]> {
-  return db.query.bounties.findMany({
-    where: eq(schema.bounties.status, "open"),
-    orderBy: [desc(schema.bounties.createdAt)],
-    limit,
+export async function getRelevantBounties(
+  alienId: string,
+  limit = 50,
+): Promise<Bounty[]> {
+  const [openBounties, myPostedBounties, myClaimedBounties] = await Promise.all([
+    // Open bounties (others can claim)
+    db.query.bounties.findMany({
+      where: and(eq(schema.bounties.status, "open"), ne(schema.bounties.creatorAlienId, alienId)),
+      orderBy: [desc(schema.bounties.createdAt)],
+      limit,
+    }),
+    // Bounties I posted (all statuses, including claimed)
+    db.query.bounties.findMany({
+      where: eq(schema.bounties.creatorAlienId, alienId),
+      orderBy: [desc(schema.bounties.createdAt)],
+      limit,
+    }),
+    // Bounties I claimed (to check status)
+    db.query.bounties.findMany({
+      where: eq(schema.bounties.claimedByAlienId, alienId),
+      orderBy: [desc(schema.bounties.createdAt)],
+      limit,
+    }),
+  ]);
+
+  // Combine and dedupe by ID
+  const all = [...openBounties, ...myPostedBounties, ...myClaimedBounties];
+  const seen = new Set<string>();
+  return all.filter((b) => {
+    if (seen.has(b.id)) return false;
+    seen.add(b.id);
+    return true;
   });
 }
 
